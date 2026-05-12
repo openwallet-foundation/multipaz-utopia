@@ -15,6 +15,12 @@ with the following changes
   system errors (like `OutOfMemoryError`). Catching it prevents the environment from terminating
   when it absolutely needs to, leading to corrupted state and unpredictable behavior.
 
+- **Don't throw `Error`:** The `java.lang.Error` (or `kotlin.Error` which is type-aliased for 
+  when running on the JVM) class represents serious, unrecoverable problems that an application
+  should generally not attempt to catch. Unlike standard exceptions, these typically indicate
+  failures at the Java Virtual Machine (JVM) level or catastrophic system conditions. Use
+  `IllegalStateException` or similar instead.
+
 - **Avoid catching generic `Exception`:** Catching all exceptions acts as a black hole for
   standard developer bugs (like `NullPointerException` or `IllegalArgumentException`). This
   makes debugging extremely difficult because the application fails silently.
