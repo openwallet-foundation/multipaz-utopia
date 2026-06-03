@@ -27,6 +27,7 @@ COPY multipaz-server-deployment/docker/nginx.conf /etc/nginx/nginx.conf
 
 # Copy Multipaz services configurations
 COPY multipaz-server-deployment/docker/services/backend.conf /etc/multipaz/backend.conf
+COPY multipaz-server-deployment/docker/services/brewery.conf /etc/multipaz/brewery.conf
 COPY multipaz-server-deployment/docker/services/csa.conf /etc/multipaz/csa.conf
 COPY multipaz-server-deployment/docker/services/openid4vci.conf /etc/multipaz/openid4vci.conf
 COPY multipaz-server-deployment/docker/services/records.conf /etc/multipaz/records.conf
@@ -50,6 +51,6 @@ RUN mkdir -p /var/lib/nginx/body /var/log/nginx /run /run/nginx && \
 USER multipaz
 
 # Expose unified port (nginx) and individual service ports
-EXPOSE 8080 8004 8005 8006 8007 8008 8009
+EXPOSE 8080 8004 8005 8006 8007 8008 8009 8010
 
 ENTRYPOINT ["/app/start-servers.sh"]
