@@ -1,0 +1,191 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+// multipaz-server-deployment/build.gradle.kts
+// Tasks for building Docker images and deployment bundles
+
+val serverProjects = listOf(
+    "organizations:registry:backend",
+    "organizations:upay:backend",
+    "organizations:dmv:backend",
+    "organizations:bank_of_utopia:backend",
+    "organizations:brewery:backend"
+)
+
+val serverLibs = listOf(
+    "multipaz-verifier",
+    "multipaz-openid4vci",
+    "multipaz-records",
+)
+
+tasks.register("collectDependencies") {
+    description = "Collect thin server JARs and shared dependency JARs into a staging directory"
+    group = "deployment"
+
+    // Depend on jar tasks for server projects plus their full runtime classpath build dependencies
+    for (name in serverProjects) {
+        val serverProject = project(":${name}")
+        dependsOn(serverProject.tasks.named("jar"))
+        dependsOn(serverProject.configurations.getByName("runtimeClasspath").buildDependencies)
+    }
+
+    val stagingDir = layout.buildDirectory.dir("docker-staging")
+
+    outputs.dir(stagingDir)
+
+    doLast {
+        val jarsDir = stagingDir.get().dir("jars").asFile
+        val libsDir = stagingDir.get().dir("libs").asFile
+        jarsDir.mkdirs()
+        libsDir.mkdirs()
+
+        // Collect all unique dependency JARs from all server projects
+        val seenLibs = mutableSetOf<String>()
+        for (name in serverProjects) {
+            val serverProject = project(":${name}")
+            val runtimeCp = serverProject.configurations.getByName("runtimeClasspath")
+
+            // Copy the thin server JAR
+            val baseName = name.removeSuffix(":backend")
+            val shortName = baseName.substring(baseName.lastIndexOf(':') + 1)
+            val jarFile = serverProject.tasks.getByName<Jar>("jar").archiveFile.get().asFile
+            jarFile.copyTo(File(jarsDir, "${shortName}.jar"), overwrite = true)
+
+            // Copy dependency JARs (deduplicated by filename)
+            for (dep in runtimeCp.resolve()) {
+                if (dep.name.endsWith(".jar") && seenLibs.add(dep.name)) {
+                    var serverLib: String? = null
+                    for (s in serverLibs) {
+                        if (dep.name.startsWith("$s-")) {
+                            serverLib = s
+                            break
+                        }
+                    }
+                    if (serverLib != null) {
+                        dep.copyTo(File(jarsDir, "$serverLib.jar"), overwrite = true)
+                    } else {
+                        dep.copyTo(File(libsDir, dep.name), overwrite = true)
+                    }
+                }
+            }
+        }
+
+        val libCount = libsDir.listFiles()?.size ?: 0
+        println("Collected ${serverProjects.size} server JARs and $libCount shared dependency JARs")
+    }
+}
+
+tasks.register("buildWebFrontend") {
+    description = "Build the web frontend (Kotlin/JS)"
+    group = "deployment"
+
+    dependsOn(":organizations:registry:frontend:jsBrowserDistribution")
+}
+
+tasks.register("buildAll") {
+    description = "Build all server JARs and web frontend"
+    group = "deployment"
+
+    dependsOn("collectDependencies", "buildWebFrontend")
+}
+
+// Helper function to get container tool (podman or docker)
+fun getContainerTool(): String {
+    return if (file("/usr/bin/podman").exists() ||
+        file("/usr/local/bin/podman").exists() ||
+        file("/opt/homebrew/bin/podman").exists()) {
+        "podman"
+    } else {
+        "docker"
+    }
+}
+
+fun getVersionTag(): String {
+    val current = LocalDateTime.now()!!
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm_ss")!!
+    return current.format(formatter)!!
+}
+
+tasks.register<Exec>("buildDockerImage") {
+    description = "Build Docker image for native architecture"
+    group = "deployment"
+
+    dependsOn("buildAll")
+
+    workingDir = rootProject.projectDir
+
+    val containerTool = getContainerTool()
+    val versionTag = getVersionTag()
+
+    // Detect native architecture
+    val arch = System.getProperty("os.arch")
+    val platform = when {
+        arch == "aarch64" || arch == "arm64" -> "linux/arm64"
+        else -> "linux/amd64"
+    }
+
+    commandLine(
+        containerTool, "build",
+        "--platform", platform,
+        "-f", "deployment/docker/Dockerfile",
+        "-t", "multipaz-utopia/server-bundle:${versionTag}",
+        "-t", "multipaz-utopia/server-bundle:latest",
+        "."
+    )
+}
+
+tasks.register<Exec>("buildDockerImageAmd64") {
+    description = "Build Docker image for amd64 (x86_64) architecture"
+    group = "deployment"
+
+    dependsOn("buildAll")
+
+    workingDir = rootProject.projectDir
+
+    val containerTool = getContainerTool()
+    val versionTag = getVersionTag()
+
+    commandLine(
+        containerTool, "build",
+        "--platform", "linux/amd64",
+        "-f", "deployment/docker/Dockerfile",
+        "-t", "multipaz-utopia/server-bundle:${versionTag}-amd64",
+        "-t", "multipaz-utopia/server-bundle:latest-amd64",
+        "."
+    )
+}
+
+tasks.register<Exec>("buildDockerImageArm64") {
+    description = "Build Docker image for arm64 (Apple Silicon, AWS Graviton) architecture"
+    group = "deployment"
+
+    dependsOn("buildAll")
+
+    workingDir = rootProject.projectDir
+
+    val containerTool = getContainerTool()
+    val versionTag = getVersionTag()
+
+    commandLine(
+        containerTool, "build",
+        "--platform", "linux/arm64",
+        "-f", "deployment/docker/Dockerfile",
+        "-t", "multipaz-utopia/server-bundle:${versionTag}-arm64",
+        "-t", "multipaz-utopia/server-bundle:latest-arm64",
+        "."
+    )
+}
+
+tasks.register<Exec>("runDockerImage") {
+    description = "Run the Docker image locally"
+    group = "deployment"
+
+    val containerTool = getContainerTool()
+
+    commandLine(
+        containerTool, "run",
+        "--rm",
+        "-p", "8000-8010:8000-8010",
+        "multipaz-utopia/server-bundle:latest"
+    )
+}

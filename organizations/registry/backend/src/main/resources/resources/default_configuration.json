@@ -1,0 +1,11 @@
+{
+  "server_port": 8004,
+  "ca_allow_enrollment": [
+      "*.multipaz.org/**",
+      "sorotokin.com/**"
+  ],
+  "ca_trust_servers": [
+      "*.multipaz.org/**",
+      "sorotokin.com/**"
+  ]
+}

@@ -1,181 +1,66 @@
 [versions]
-agp = "8.13.1"
-android-compileSdk = "36"
-android-minSdk = "26"
-android-targetSdk = "36"
-androidx-activity-compose = "1.12.0"
-androidx-appcompat = "1.7.1"
-androidx-core-ktx = "1.17.0"
-androidx-espresso-core = "3.7.0"
-androidx-material = "1.13.0"
-androidx-test-junit = "1.3.0"
-compose-plugin = "1.10.1"
 junit = "4.13.2"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 kotlinx-io = "0.8.2"
 kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.9.0"
-kotlinx-browser = "0.5.0"
-bouncy-castle = "1.83"
-tink = "1.19.0"
 ksp = "2.3.3"
-androidx-biometrics = "1.2.0-alpha05"
-androidx-browser = "1.8.0"
-uiToolingPreview = "1.9.5"
-volley = "1.2.1"
-cbor = "0.9"
-camera = "1.5.1"
 ktor = "3.3.3"
 logback = "1.5.21"
-androidx-lifecycle = "2.2.0"
-androidx-lifecycle-ktx = "2.10.0"
-accompanist = "0.37.3"
 nimbus-sdk = "11.30.1"
 zxing = "3.5.4"
 hsqldb = "2.7.4"
 mysql = "8.0.33"
 postgresql = "42.7.8"
-sqlite-jdbc = "3.51.2.0"
-compose-junit4 = "1.9.5"
-compose-test-manifest = "1.9.5"
 navigation-plugin = "2.9.6"
-jetbrains-navigation = "2.9.1"
-jetbrains-lifecycle = "2.9.6"
 buildconfig = "6.0.5"
-androidx-sqlite = "2.5.2"
-play-services-identity-credentials = "16.0.0-alpha08"
-androidx-credentials = "1.5.0"
-androidx-credentials-registry-provider = "1.0.0-alpha03"
-errorprone = "2.44.0"
-semver = "3.0.0"
 skie = "0.10.8"
-process-phoenix = "3.0.0"
-coil = "3.3.0"
-compottie = "2.0.2"
-detekt = "1.23.8"
 # Kotlin/JS wrappers; require `./gradlew kotlinUpgradeYarnLock` after version changes
 # this is how npm works, that will update kotlin-js-store/yarn.lock (part of the repo)
 kotlin-wrappers = "2025.12.1"
 kotlin-wrappers-rx = "2025.12.1-19.2.0"
 kotlin-wrappers-em = "2025.12.1-11.14.0"
-koog = "0.5.1"
-junit-jupiter = "5.10.0"
-jetbrains-navigationevent = "1.0.1"
+multipaz = "0.100.0-pre.29.e186fe86"
 
 [libraries]
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-jupiter" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+multipaz = { group = "org.multipaz", name = "multipaz", version.ref = "multipaz" }
+multipaz-doctypes = { group = "org.multipaz", name = "multipaz-doctypes", version.ref = "multipaz" }
+multipaz-longfellow = { group = "org.multipaz", name = "multipaz-longfellow", version.ref = "multipaz" }
+multipaz-cbor-rpc = { group = "org.multipaz", name = "multipaz-cbor-rpc", version.ref = "multipaz" }
+multipaz-server = { group = "org.multipaz", name = "multipaz-server", version.ref = "multipaz" }
+multipaz-utopia = { group = "org.multipaz", name = "multipaz-utopia", version.ref = "multipaz" }
+multipaz-verifier = { group = "org.multipaz", name = "multipaz-verifier", version.ref = "multipaz" }
+multipaz-records = { group = "org.multipaz", name = "multipaz-records", version.ref = "multipaz" }
+multipaz-openid4vci = { group = "org.multipaz", name = "multipaz-openid4vci", version.ref = "multipaz" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref="kotlinx-coroutines" }
-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref="kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref="kotlinx-coroutines" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref="kotlinx-coroutines" }
 kotlinx-io-bytestring = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-bytestring", version.ref = "kotlinx-io"}
-kotlinx-io-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version.ref = "kotlinx-io"}
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
-kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
-androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-junit" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
-androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
-bouncy-castle-bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncy-castle" }
-bouncy-castle-bcpkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncy-castle" }
-tink = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tink"}
-ksp-symbol-processing-api = {module="com.google.devtools.ksp:symbol-processing-api", version.ref="ksp"}
-androidx-biometrics = { module = "androidx.biometric:biometric", version.ref = "androidx-biometrics" }
-androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
-volley = { module = "com.android.volley:volley", version.ref = "volley" }
-cbor = { module = "co.nstant.in:cbor", version.ref = "cbor" }
-androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
-androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
-androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
-ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
-ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
-ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-server-double-receive = { module = "io.ktor:ktor-server-double-receive", version.ref = "ktor" }
 ktor-server-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref="logback" }
-androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle-ktx" }
-accompanist-drawablepainter = { group = "com.google.accompanist", name = "accompanist-drawablepainter", version.ref = "accompanist"}
-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist"}
 nimbus-oauth2-oidc-sdk = { module = "com.nimbusds:oauth2-oidc-sdk", version.ref = "nimbus-sdk" }
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "hsqldb" }
 mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
-sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc"}
-compose-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref="compose-junit4" }
-compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref="compose-test-manifest" }
-jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref="jetbrains-navigation" }
-jetbrains-navigation-runtime = { module = "org.jetbrains.androidx.navigation:navigation-runtime", version.ref="jetbrains-navigation" }
-jetbrains-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref="jetbrains-lifecycle" }
-jetbrains-navigationevent-compose = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version.ref = "jetbrains-navigationevent" }
-androidx-sqlite = { module="androidx.sqlite:sqlite", version.ref = "androidx-sqlite" }
-androidx-sqlite-framework = { module="androidx.sqlite:sqlite-framework", version.ref = "androidx-sqlite" }
-androidx-sqlite-bundled = { module="androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
 postgresql = { module="org.postgresql:postgresql", version.ref = "postgresql" }
-play-services-identity-credentials = {module = "com.google.android.gms:play-services-identity-credentials", version.ref = "play-services-identity-credentials"}
-androidx-credentials = { module = "androidx.credentials:credentials", version.ref="androidx-credentials" }
-androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref="androidx-credentials" }
-androidx-credentials-registry-provider = { module = "androidx.credentials.registry:registry-provider", version.ref = "androidx-credentials-registry-provider" }
-errorprone-annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref="errorprone"}
-semver = { module = "io.github.z4kn4fein:semver", version.ref="semver" }
-process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref="process-phoenix" }
-coil-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil" }
-coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-coil-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
-kotlin-wrappers-web = { module = "org.jetbrains.kotlin-wrappers:kotlin-web", version.ref="kotlin-wrappers" }
-kotlin-wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref="kotlin-wrappers" }
 kotlin-wrappers-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref= "kotlin-wrappers-rx" }
 kotlin-wrappers-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref= "kotlin-wrappers-rx" }
 kotlin-wrappers-emotion-react-js = { module = "org.jetbrains.kotlin-wrappers:kotlin-emotion-react-js", version.ref="kotlin-wrappers-em" }
-skie-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
-compottie = { module = "io.github.alexzhirkevich:compottie", version.ref="compottie" }
-# Build Logic
-gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-android-tools-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-# Koog Ai Agent
-koog-agent = { module = "ai.koog:koog-agents", version.ref = "koog" }
-koog-executor-openai-client = { module = "ai.koog:prompt-executor-openai-client", version.ref = "koog" }
-koog-executor-google-client = { module = "ai.koog:prompt-executor-google-client", version.ref = "koog" }
-koog-executor-anthropic-client = { module = "ai.koog:prompt-executor-anthropic-client", version.ref = "koog" }
-koog-executor-llms-all = { module = "ai.koog:prompt-executor-llms-all", version.ref = "koog" }
-koog-prompt-model = { module = "ai.koog:prompt-model", version.ref = "koog" }
-koog-agents-ext = { module = "ai.koog:agents-ext", version.ref = "koog" }
 
 [plugins]
-androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
-jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation-plugin" }
-parcelable = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
