@@ -21,7 +21,7 @@ skie = "0.10.8"
 kotlin-wrappers = "2025.12.1"
 kotlin-wrappers-rx = "2025.12.1-19.2.0"
 kotlin-wrappers-em = "2025.12.1-11.14.0"
-multipaz = "0.100.0-pre.29.e186fe86"
+multipaz = "0.100.0-SNAPSHOT"
 
 [libraries]
 multipaz = { group = "org.multipaz", name = "multipaz", version.ref = "multipaz" }
