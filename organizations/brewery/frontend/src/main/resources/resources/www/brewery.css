@@ -457,6 +457,30 @@ nav a.nav-active {
 .result-approved { border-top: 4px solid var(--accent); }
 .result-declined  { border-top: 4px solid #b94040; }
 
+/* Status icon — a circular badge above the dialog title */
+.result-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.result-icon-success {
+    background: rgba(92, 122, 62, 0.12);
+    color: var(--accent);
+}
+
+.result-icon-error {
+    background: rgba(185, 64, 64, 0.12);
+    color: #b94040;
+}
+
 .result-box h2 {
     font-family: var(--font-serif);
     font-size: 1.4rem;
@@ -467,6 +491,21 @@ nav a.nav-active {
     font-size: 0.9rem;
     color: var(--text-muted);
     margin-bottom: 0.5rem;
+}
+
+/* Technical detail block — error codes / exception messages, set apart from the message */
+.result-detail {
+    margin-top: 1rem;
+    padding: 0.65rem 0.85rem;
+    background: rgba(185, 64, 64, 0.06);
+    border: 1px solid rgba(185, 64, 64, 0.25);
+    border-radius: 4px;
+    font-family: 'Menlo', 'Consolas', monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: #8a3535;
+    text-align: left;
+    word-break: break-word;
 }
 
 .btn-close {

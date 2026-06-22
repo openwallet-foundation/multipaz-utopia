@@ -21,3 +21,5 @@ samples/testapp/iosApp/DeveloperConfig.xcconfig
 
 # HSQLDB runtime files
 db.hsqldb.*
+
+kotlin-js-store/
