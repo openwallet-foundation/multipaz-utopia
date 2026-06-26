@@ -1,49 +1,245 @@
-html {
-    background-color: #FAF0FF;
-    height: 100%;
+:root {
+    --page-bg: #F0EADD;
+    --card-bg: #FBF8F1;
+    --border: #E7DFCF;
+    --ink: #1E1610;
+    --ink-soft: #6F6657;
+    --label: #2C2722;
+    --input-bg: #FFFFFF;
+    --input-border: #D9D0BE;
+    --placeholder: #A89F8C;
+    --success-bg: #7E976E;
+    --success-ink: #20300E;
+    --error-bg: #B5755E;
+    --error-ink: #3E1C12;
+    --danger: #B5755E;
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    min-height: 100%;
 }
 
 body {
-    max-width: 720px;
-    min-height: 100%;
-    margin: 0px auto;
-    background-color: white;
+    background-color: var(--page-bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 48px 16px;
 }
 
-div#main {
-    padding: 12px;
+.page {
+    width: 100%;
+    max-width: 480px;
 }
 
-/* this is for left-to-right languages only */
+/* ---- Status banner (above the card) ---- */
 
-.controls {
-    display: table;
-    border-spacing: 0 0.5em;
+.banner {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 20px rgba(30, 22, 16, 0.10);
 }
 
-.row {
-    display: table-row;
+.banner[hidden] {
+    display: none;
 }
 
-.row > * {
-    display: table-cell;
+.banner.success {
+    background-color: var(--success-bg);
+    color: var(--success-ink);
 }
 
-.row > label {
-    padding-right: 4px;
-    text-align: right;
+.banner.error {
+    background-color: var(--error-bg);
+    color: var(--error-ink);
 }
 
-.label {
-    padding-right: 4px;
-    text-align: right;
+.banner-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
 }
 
-.field {
-    font-family: sans-serif;
-    font-size: 0.875em;
+.banner-title svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
 }
 
-input[type=text], input[type=number] select {
-    width: 240px;
+.banner-line {
+    font-size: 13px;
+    opacity: 0.92;
+}
+
+.banner-line + .banner-line {
+    margin-top: 2px;
+}
+
+/* ---- Card ---- */
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 28px 20px;
+    box-shadow: 0 10px 30px rgba(30, 22, 16, 0.06);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.brand-icon {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+}
+
+.brand-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.brand-text h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.brand-text .subtitle {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+}
+
+/* ---- Form ---- */
+
+.field-group {
+    margin-bottom: 16px;
+}
+
+.field-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.field-group label,
+.field-group .label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--label);
+    margin-bottom: 6px;
+}
+
+
+input[type=text],
+input[type=number] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--ink);
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type=text]:focus,
+input[type=number]:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(30, 22, 16, 0.08);
+}
+
+input::placeholder {
+    color: var(--placeholder);
+}
+
+input.invalid,
+input.invalid:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(181, 117, 94, 0.15);
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--label);
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--ink);
+    margin: 0;
+}
+
+#pay-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--card-bg);
+    background-color: var(--ink);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+#pay-btn:hover {
+    background-color: #2C2118;
+}
+
+#pay-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* ---- Footer ---- */
+
+.card-footer {
+    margin: 22px 0 4px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+}
+
+.card-footer a {
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+
+.card-footer a:hover {
+    text-decoration: underline;
 }

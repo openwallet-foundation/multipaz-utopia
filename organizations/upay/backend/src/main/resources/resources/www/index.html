@@ -10,33 +10,55 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="main">
-<h1>UPay Payment Service</h1>
-<div class="controls">
-    <div class="row">
-        <label for="account">Payee account number:</label>
-        <input id="account" type="text"/>
-    </div>
-    <div class="row">
-        <label for="amount">Payment amount:</label>
-        <input id="amount" type="number"/>
-    </div>
-    <div class="row">
-        <label for="description">Description:</label>
-        <input id="description" type="text"/>
-    </div>
-    <div class="row">
-        <label>DC API Protocols</label>
-        <div>
-            <label><input id="protocol_iso" type="checkbox" checked="checked"/>ISO 18013-7 Annex C</label>
-            <br/>
-            <label><input id="protocol_openid4vp" type="checkbox" checked="checked"/>OpenID4VP v1</label>
+<main class="page">
+    <div id="banner" class="banner" hidden></div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3Z"/>
+                    <path d="M12 8v8M9.5 9.5h3.2a1.8 1.8 0 0 1 0 3.6H10m-.5 0h3.2a1.8 1.8 0 0 1 0 3.6"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1>UPay Payment Service</h1>
+                <p class="subtitle">Secure Payment Portal</p>
+            </div>
         </div>
+
+        <form id="pay-form" onsubmit="return false">
+            <div class="field-group">
+                <label for="account">Payee account number</label>
+                <input id="account" type="text" placeholder="Enter 16-digit account number" autocomplete="off"/>
+            </div>
+
+            <div class="field-group">
+                <div class="field-head">
+                    <label for="amount">Payment amount</label>
+                </div>
+                <input id="amount" type="number" placeholder="e.g., 100.00"/>
+            </div>
+
+            <div class="field-group">
+                <label for="description">Description</label>
+                <input id="description" type="text" placeholder="Payment for invoice #123"/>
+            </div>
+
+            <div class="field-group">
+                <span class="label">DC API Protocols</span>
+                <label class="check"><input id="protocol_iso" type="checkbox" checked="checked"/>ISO 18013-7 Annex C</label>
+                <label class="check"><input id="protocol_openid4vp" type="checkbox" checked="checked"/>OpenID4VP v1</label>
+            </div>
+
+            <button type="button" id="pay-btn" onclick="run()">Pay Now</button>
+        </form>
+
+        <p class="card-footer">
+            &copy; 2026 Utopia Universe UPay Service.
+        </p>
     </div>
-</div>
-<button onclick="run()">Pay</button>
-<div id="result">
-</div>
-</div>
+</main>
 </body>
 </html>
