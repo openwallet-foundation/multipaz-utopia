@@ -45,3 +45,7 @@ dependencies {
 
 ktor {
 }
+
+// Generates www/accounts.json (the payee dropdown) from the deployment records
+// seed and wires it into processResources. See the script for details.
+apply(from = "gradle/generate-accounts.gradle.kts")
