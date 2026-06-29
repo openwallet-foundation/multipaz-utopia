@@ -30,15 +30,16 @@
 
         <form id="pay-form" onsubmit="return false">
             <div class="field-group">
-                <label for="account">Payee account number</label>
-                <input id="account" type="text" placeholder="Enter 16-digit account number" autocomplete="off"/>
+                <label for="account-select">Payee account number</label>
+                <select id="account-select"></select>
+                <input id="account" type="text" placeholder="Enter account number" autocomplete="off" hidden/>
+                <span id="account-error" class="field-error" hidden></span>
             </div>
 
             <div class="field-group">
-                <div class="field-head">
-                    <label for="amount">Payment amount</label>
-                </div>
+                <label for="amount">Payment amount</label>
                 <input id="amount" type="number" placeholder="e.g., 100.00"/>
+                <span id="amount-error" class="field-error" hidden></span>
             </div>
 
             <div class="field-group">

@@ -140,12 +140,6 @@ body {
     margin-bottom: 16px;
 }
 
-.field-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
 .field-group label,
 .field-group .label {
     display: block;
@@ -157,7 +151,8 @@ body {
 
 
 input[type=text],
-input[type=number] {
+input[type=number],
+select {
     width: 100%;
     padding: 10px 12px;
     font-size: 14px;
@@ -169,8 +164,19 @@ input[type=number] {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%236F6657' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m1 1 5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
 input[type=text]:focus,
-input[type=number]:focus {
+input[type=number]:focus,
+select:focus {
     border-color: var(--ink);
     box-shadow: 0 0 0 3px rgba(30, 22, 16, 0.08);
 }
@@ -180,9 +186,22 @@ input::placeholder {
 }
 
 input.invalid,
-input.invalid:focus {
+select.invalid,
+input.invalid:focus,
+select.invalid:focus {
     border-color: var(--danger);
     box-shadow: 0 0 0 3px rgba(181, 117, 94, 0.15);
+}
+
+.field-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--danger);
+}
+
+.field-error[hidden] {
+    display: none;
 }
 
 .check {

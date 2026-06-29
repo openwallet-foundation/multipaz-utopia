@@ -8,6 +8,53 @@ const ICON_ERROR =
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<circle cx="12" cy="12" r="10"/><path d="M12 8v4.5M12 16h.01"/></svg>';
 
+const MANUAL_ENTRY = "__manual__";
+
+// The eligible payee accounts are seeded in deployment/docker/init/records.json;
+// accounts.json is a slim list derived from it (account_number + label). We load
+// it into the dropdown so the user can pick a known account, with "Manual entry"
+// as a fallback for anything not in the list.
+async function loadAccounts() {
+    const select = document.getElementById("account-select");
+    try {
+        const accounts = await (await fetch("accounts.json")).json();
+        for (const account of accounts) {
+            const option = document.createElement("option");
+            option.value = account.account_number;
+            option.textContent = account.label
+                ? account.label + " (" + account.account_number + ")"
+                : account.account_number;
+            select.appendChild(option);
+        }
+    } catch (e) {
+        // If the list can't be loaded, fall back to manual entry only.
+    }
+    const manual = document.createElement("option");
+    manual.value = MANUAL_ENTRY;
+    manual.textContent = "Manual entry…";
+    select.appendChild(manual);
+
+    select.addEventListener("change", syncAccountInput);
+    syncAccountInput();
+}
+
+// Keeps the hidden #account input (the value run() reads) in sync with the
+// dropdown, and reveals it for free-form typing when "Manual entry" is selected.
+function syncAccountInput() {
+    const select = document.getElementById("account-select");
+    const input = document.getElementById("account");
+    if (select.value === MANUAL_ENTRY) {
+        input.value = "";
+        input.hidden = false;
+        input.focus();
+    } else {
+        input.value = select.value;
+        input.hidden = true;
+    }
+}
+
+window.addEventListener("DOMContentLoaded", loadAccounts);
+
 async function run() {
     clearStatus();
 
@@ -22,9 +69,11 @@ async function run() {
         protocols.push("openid4vp-v1")
     }
 
-    const errors = validateInputs(account, amountRaw, protocols);
-    if (errors.length > 0) {
-        showValidationErrors(errors);
+    // Validate only what is universally true — required fields, a positive
+    // amount, and at least one protocol. We deliberately do NOT check the account
+    // number's format: whether an account actually exists is the records server's
+    // call, so a well-formed-but-unknown account still goes through and fails there.
+    if (!validateInputs(account, amountRaw)) {
         return;
     }
 
@@ -41,61 +90,81 @@ async function run() {
     btn.disabled = true;
     try {
         const response = await multipazVerifyCredentials(req);
-        if (response.error) {
+        if (response && response.error) {
+            // A failure reported after the card was presented (e.g. insufficient
+            // funds at commit). The server gives us a code and a description.
             showError(response.error, response.error_description);
         } else {
             showSuccess(response);
         }
     } catch (e) {
-        showError("network_error", (e && e.message) ? e.message : String(e));
+        // An unknown/invalid payee account fails in createTransaction, before the
+        // wallet is ever invoked, so the verifier client throws instead of
+        // returning an {error}. Surface it as a decline rather than freezing.
+        showError(null, "The payment could not be initiated. Unknown error occurred.");
     } finally {
         btn.disabled = false;
     }
 }
 
-function validateInputs(account, amountRaw, protocols) {
-    const errors = [];
+// Required-field / sane-amount checks only. Returns true when the form may be
+// submitted; otherwise marks the offending fields and returns false.
+function validateInputs(account, amountRaw) {
+    let ok = true;
 
     if (account === "") {
-        errors.push({field: "account", message: "Payee account number is required."});
-    } else if (!/^\d+$/.test(account)) {
-        errors.push({field: "account", message: "Payee account number must contain digits only."});
+        setFieldError("account", "Please select or enter a payee account.");
+        ok = false;
     }
 
     if (amountRaw === "") {
-        errors.push({field: "amount", message: "Payment amount is required."});
+        setFieldError("amount", "Please enter a payment amount.");
+        ok = false;
     } else {
         const amount = Number(amountRaw);
         if (!isFinite(amount)) {
-            errors.push({field: "amount", message: "Payment amount must be a valid number."});
+            setFieldError("amount", "Payment amount must be a number.");
+            ok = false;
         } else if (amount <= 0) {
-            errors.push({field: "amount", message: "Payment amount must be greater than zero."});
+            setFieldError("amount", "Payment amount must be greater than zero.");
+            ok = false;
         }
     }
 
-    return errors;
+    return ok;
 }
 
-function showValidationErrors(errors) {
-    for (const err of errors) {
-        if (err.field === "account" || err.field === "amount") {
-            document.getElementById(err.field).classList.add("invalid");
-        }
+function setFieldError(field, message) {
+    const error = document.getElementById(field + "-error");
+    if (error) {
+        error.textContent = message;
+        error.hidden = false;
     }
-    const lines = errors.map(function (err) {
-        return err.message;
-    });
-    renderBanner("error", ICON_ERROR, "Please fix the following", lines);
+    // Highlight the visible control: the manual input when shown, else the select.
+    if (field === "account") {
+        const input = document.getElementById("account");
+        (input.hidden ? document.getElementById("account-select") : input)
+            .classList.add("invalid");
+    } else if (field === "amount") {
+        document.getElementById("amount").classList.add("invalid");
+    }
+}
+
+function clearFieldErrors() {
+    for (const error of document.querySelectorAll(".field-error")) {
+        error.hidden = true;
+        error.textContent = "";
+    }
+    for (const control of document.querySelectorAll(".invalid")) {
+        control.classList.remove("invalid");
+    }
 }
 
 function clearStatus() {
     const banner = document.getElementById("banner");
     banner.hidden = true;
     banner.innerHTML = "";
-    const marked = document.querySelectorAll("input.invalid");
-    for (const el of marked) {
-        el.classList.remove("invalid");
-    }
+    clearFieldErrors();
 }
 
 function showSuccess(response) {
@@ -112,10 +181,14 @@ function showSuccess(response) {
 function showError(error, description) {
     const detail = description || "The payment could not be completed.";
     const line = document.createElement("span");
-    const code = document.createElement("strong");
-    code.textContent = "Error Code: " + error + " ";
-    line.appendChild(code);
-    line.appendChild(document.createTextNode("- " + detail));
+    if (error) {
+        const code = document.createElement("strong");
+        code.textContent = "Error Code: " + error + " ";
+        line.appendChild(code);
+        line.appendChild(document.createTextNode("- " + detail));
+    } else {
+        line.textContent = detail;
+    }
     renderBanner("error", ICON_ERROR, "Transaction Declined", [line]);
 }
 
