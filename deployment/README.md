@@ -115,7 +115,7 @@ All services are available through the nginx proxy on port 8100:
 | Utopia DMV     | http://localhost:8100/dmv/            |
 | Bank of Utopia | http://localhost:8100/bank_of_utopia/ |
 | UPay service   | http://localhost:8100/upay/           |
-| Brewery        | http://localhost:8100/brewery/        |
+| Marketplace        | http://localhost:8100/marketplace/        |
 
 ## Deploying to a Server
 

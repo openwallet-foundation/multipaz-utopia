@@ -9,7 +9,7 @@ val serverProjects = listOf(
     "organizations:upay:backend",
     "organizations:dmv:backend",
     "organizations:bank_of_utopia:backend",
-    "organizations:brewery:backend"
+    "organizations:marketplace:backend"
 )
 
 val serverLibs = listOf(

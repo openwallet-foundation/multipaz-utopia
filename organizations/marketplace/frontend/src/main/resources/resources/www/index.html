@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="unsafe-url">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Utopia Marketplace</title>
+    <link rel="stylesheet" href="marketplace.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <span class="site-logo">Utopia Marketplace</span>
+    </div>
+</header>
+
+<main class="archive-main">
+    <div class="archive-intro">
+        <p class="release-label">WELCOME TO UTOPIA</p>
+        <h1>Everyday groceries,<br>checkout you can trust.</h1>
+        <p class="archive-sub">From fresh produce to the pantry staples you rely on — pay securely with a
+            digital payment credential. Age-restricted items ask for a digital ID, verified in seconds
+            right at checkout.</p>
+    </div>
+
+    <!-- Aisles are rendered from catalog.js -->
+    <div id="aisles"></div>
+
+    <div class="tasting-banner">
+        <div class="tasting-text">
+            <h3>Buying something age-restricted?</h3>
+            <p>Present a digital ID (mDL, EU PID, Aadhaar) once at checkout. We confirm you're 18+
+                without ever seeing your date of birth — no cashier, no paperwork.</p>
+        </div>
+        <a href="#aisles" class="btn-tasting">Start Shopping</a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <p class="footer-logo">Utopia Marketplace</p>
+        <p class="footer-tag">Fresh groceries and everyday essentials, with fast and private
+            credential-based checkout.</p>
+        <p class="footer-copy">&copy; 2026 UTOPIA MARKETPLACE. SHOP WITH CONFIDENCE.</p>
+    </div>
+</footer>
+
+<script src="catalog.js"></script>
+<script>
+    // Render each aisle as a titled section with a product grid.
+    (function () {
+        const root = document.getElementById("aisles");
+        AISLES.forEach(function (aisle) {
+            const items = PRODUCTS.filter(function (p) { return p.aisle === aisle.id; });
+            if (!items.length) return;
+
+            const section = document.createElement("section");
+            section.className = "aisle";
+
+            const head = document.createElement("div");
+            head.className = "aisle-head";
+            head.innerHTML =
+                '<h2 class="aisle-title">' + escapeHtml(aisle.name) + "</h2>" +
+                '<p class="aisle-blurb">' + escapeHtml(aisle.blurb) + "</p>";
+            section.appendChild(head);
+
+            const grid = document.createElement("div");
+            grid.className = "product-grid";
+            items.forEach(function (p) {
+                const card = document.createElement("a");
+                card.className = "product-card";
+                card.href = "product.html?id=" + p.id;
+                card.innerHTML =
+                    '<div class="card-image-wrap">' +
+                        '<img src="' + p.image + '" alt="' + escapeHtml(p.name) + '">' +
+                        (p.ageRestricted ? '<span class="badge badge-age">18+</span>' : "") +
+                    "</div>" +
+                    '<div class="card-info">' +
+                        "<h2>" + escapeHtml(p.name) + "</h2>" +
+                        '<p class="card-sub">' + escapeHtml(p.tagline) + "</p>" +
+                        '<span class="card-price">$' + escapeHtml(p.price) + "</span> " +
+                        '<span class="card-unit">' + escapeHtml(p.unit) + "</span>" +
+                    "</div>";
+                grid.appendChild(card);
+            });
+            section.appendChild(grid);
+            root.appendChild(section);
+        });
+    })();
+</script>
+</body>
+</html>

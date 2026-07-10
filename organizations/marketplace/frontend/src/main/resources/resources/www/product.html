@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="unsafe-url">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product — Utopia Marketplace</title>
+    <link rel="stylesheet" href="marketplace.css">
+    <script src="catalog.js"></script>
+    <script src="verify_credentials.js"></script>
+    <script src="marketplace.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <span class="site-logo">Utopia Marketplace</span>
+    </div>
+</header>
+
+<div class="back-nav">
+    <a href="index.html" class="back-link">&#8592; Back to aisles</a>
+</div>
+
+<main class="product-main">
+    <div class="product-layout">
+        <!-- Left: product image -->
+        <div class="product-image-col">
+            <img id="product-image" src="" alt="">
+        </div>
+
+        <!-- Right: product info -->
+        <div class="product-info-col">
+            <p id="product-label" class="release-label"></p>
+            <h1 id="product-name"></h1>
+            <p id="product-description" class="product-desc"></p>
+
+            <p class="flavor-heading">HIGHLIGHTS</p>
+            <div id="product-highlights" class="flavor-tags"></div>
+
+            <div class="product-purchase-box">
+                <div class="price-row">
+                    <div>
+                        <p class="box-label">PRICE</p>
+                        <p id="product-price" class="product-price-large"></p>
+                        <p id="product-unit" class="availability-text"></p>
+                    </div>
+                    <div class="availability-col">
+                        <p class="box-label">AVAILABILITY</p>
+                        <p id="product-availability" class="availability-text">In Stock</p>
+                    </div>
+                </div>
+                <button id="buy-btn" class="btn-acquire" onclick="onBuyClick()">
+                    ADD TO CART &amp; CHECK OUT
+                </button>
+                <p id="delivery-note" class="delivery-note"></p>
+            </div>
+
+            <div id="product-specs" class="product-meta-grid"></div>
+        </div>
+    </div>
+
+    <!-- About / note -->
+    <div class="product-note">
+        <h2 id="note-heading">Freshly stocked at Utopia Marketplace</h2>
+        <p id="note-body"></p>
+    </div>
+</main>
+
+<!-- Result overlay -->
+<div id="result-overlay" class="result-overlay hidden">
+    <div id="result-box" class="result-box">
+        <div id="result-content"></div>
+        <button class="btn-close" onclick="closeOverlay()">Close</button>
+    </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loading-overlay" class="result-overlay hidden">
+    <div class="result-box loading-box">
+        <div class="spinner"></div>
+        <p id="loading-text">Processing checkout…</p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <p class="footer-logo">Utopia Marketplace</p>
+        <p class="footer-tag">Fresh groceries and everyday essentials, with fast and private
+            credential-based checkout.</p>
+        <p class="footer-copy">&copy; 2026 UTOPIA MARKETPLACE. SHOP WITH CONFIDENCE.</p>
+    </div>
+</footer>
+</body>
+</html>
