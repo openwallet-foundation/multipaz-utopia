@@ -1,5 +1,6 @@
 {
-  "server_port": 8009,
+  "server_port": 8010,
+  "payee_account": "10000001",
   "enrollment_server_url": "http://localhost:8004",
   "ca_trust_servers": [
     "*.multipaz.org/**",

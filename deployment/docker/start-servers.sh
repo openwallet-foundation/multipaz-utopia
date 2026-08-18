@@ -18,9 +18,9 @@ MODE="${MODE:-proxy}"
 # Additional params that can be passed to all servers
 EXTRA_PARAMS="${EXTRA_PARAMS:-}"
 
-# Merchant account the marketplace is paid into. Unset ⇒ the value in
-# services/marketplace.conf (the local demo account). Set this at deploy time (CI) to the
-# merchant account that exists in the target System of Record.
+# Merchant account the marketplace is paid into. Unset ⇒ the demo account baked into the
+# marketplace server's default configuration. Set this at deploy time (CI) to the merchant
+# account that exists in the target System of Record.
 PAYEE_ACCOUNT="${PAYEE_ACCOUNT:-}"
 
 if [ -z "$ADMIN_PASS" ] ; then
@@ -33,7 +33,7 @@ if [ -z "$ADMIN_PASS" ] ; then
 fi
 
 if [ -z "$PAYEE_ACCOUNT" ] && [ "$BASE_URL" != "http://localhost:8100" ] ; then
-  echo "PAYEE_ACCOUNT is not set — falling back to the demo account in marketplace.conf."
+  echo "PAYEE_ACCOUNT is not set — falling back to the demo account in the marketplace defaults."
   echo "  Payments will fail unless that account exists in the target System of Record."
 fi
 

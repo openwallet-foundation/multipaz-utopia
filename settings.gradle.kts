@@ -18,12 +18,13 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        // prefers a locally published snapshot (if exists)
+        mavenLocal()
         google()
         mavenCentral()
         maven {
             url = uri("https://central.sonatype.com/repository/maven-snapshots/")
         }
-        mavenLocal()
         maven("https://jitpack.io") {
             mavenContent {
                 includeGroup("com.github.yuriy-budiyev")

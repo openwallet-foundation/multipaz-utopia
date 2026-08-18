@@ -54,7 +54,8 @@ Product images are generated inline by `catalog.js` (`tile()`) as self-contained
 
 ### `mcp`
 
-Standalone Node/TypeScript module (not part of the Gradle build). An agentic MCP
+Node/TypeScript module whose npm build is driven from Gradle
+(`:organizations:marketplace:mcp:bundle`, which is what the container image consumes). An agentic MCP
 storefront built on [`@openmobilehub/credentagent-storefront`](https://github.com/openmobilehub/credentagent):
 an AI agent (Claude, ChatGPT, Goose, Claude Code) browses the catalog and builds a
 cart, and **checkout hands off** to this backend's UPay + Digital Payment Credential
@@ -129,45 +130,78 @@ Supported credential types: `photoid`, `mdl`, `eupid`, `aadhaar`.
 ### Browser-only (desktop)
 
 ```bash
-./gradlew multipaz-utopia:organizations:marketplace:backend:run
+./gradlew :organizations:marketplace:backend:run
 ```
 
 The server starts on `http://localhost:8010`. Open `http://localhost:8010/` in your browser to see the storefront.
+
+`:runFatJar` runs the same server from a self-contained jar instead, and `:buildFatJar` produces `backend/build/libs/backend-all.jar` for `java -jar` — see [Ways to run a server](../../README.md#ways-to-run-a-server). Both work with no arguments because of the defaults below.
+
+Browsing works on its own, but **checkout needs the Registry** running on `http://localhost:8004`: `/checkout` opens the payment transaction through the payment processor that lives there, and the backend trusts only that server's IACA root when it verifies the wallet's credentials. Start it — and the issuers whose credentials you intend to present — as described in the [root README](../../README.md#running-locally).
+
+### Configuration
+
+The backend ships its defaults in [`backend/src/main/resources/resources/default_configuration.json`](backend/src/main/resources/resources/default_configuration.json), so no arguments are needed for a local run:
+
+| Key | Default | Meaning |
+|---|---|---|
+| `server_port` | `8010` | Port the storefront and verifier endpoints are served on |
+| `payee_account` | `10000001` | Merchant account purchases are paid into. Must exist in the Registry that processes the payment |
+| `enrollment_server_url` | `http://localhost:8004` | Registry — IACA root to trust plus the payment processor `/checkout` calls |
+| `ca_trust_servers` | `*.multipaz.org/**`, `sorotokin.com/**` | Servers whose credentials are trusted |
+
+Override any of them with `--args="-param <key>=<value>"`, for example to bill a different merchant account or point at a Registry elsewhere:
+
+```bash
+./gradlew :organizations:marketplace:backend:run \
+  --args="-param payee_account=10000002 -param enrollment_server_url=http://192.168.1.7:8004"
+```
+
+The same parameters go straight to the fat jar, which is the way to override anything when running outside Gradle:
+
+```bash
+java -jar backend/build/libs/backend-all.jar -param payee_account=10000002
+```
 
 ### Wallet on Android/iOS device
 
 When the wallet runs on a different device, `localhost` points to that device (not your Mac), so pass a reachable `base_url` at runtime:
 
 ```bash
-./gradlew multipaz-utopia:organizations:marketplace:backend:run \
+./gradlew :organizations:marketplace:backend:run \
   -PmarketplaceBaseUrl=http://<your-mac-lan-ip>:8010
 ```
 
 Example:
 
 ```bash
-./gradlew multipaz-utopia:organizations:marketplace:backend:run \
+./gradlew :organizations:marketplace:backend:run \
   -PmarketplaceBaseUrl=http://192.168.1.7:8010
 ```
+
+`-PmarketplaceBaseUrl` is wired into the `run` task only; with the fat jar, pass `-param base_url=…` instead.
+
+The wallet must be able to reach the Registry too, so start that one with a matching `base_url` (`--args="-param base_url=http://192.168.1.7:8004"`) and point the marketplace at it with `-param enrollment_server_url=http://192.168.1.7:8004`.
 
 ### Wallet on Android emulator
 
 Use the emulator host alias:
 
 ```bash
-./gradlew multipaz-utopia:organizations:marketplace:backend:run \
+./gradlew :organizations:marketplace:backend:run \
   -PmarketplaceBaseUrl=http://10.0.2.2:8010
 ```
 
 ### Running Inside Docker (full stack)
 
+The container bundle runs every Utopia server behind nginx, which saves wiring the services together by hand:
+
 ```bash
-./gradlew collectDependencies
-./gradlew buildDockerImage
-./gradlew runDockerImage
+./gradlew :deployment:buildDockerImage
+podman run --rm -p 8100:8100 multipaz-utopia/server-bundle:latest
 ```
 
-The marketplace site will be available at `http://localhost:8000/marketplace/`.
+The marketplace site is then at `http://localhost:8100/marketplace/`, and its Registry is seeded with the demo identities from `deployment/docker/init/records.json` — including the `10000001` merchant account. See [deployment/README.md](../../deployment/README.md) for architecture-specific builds and deployment.
 
 ---
 

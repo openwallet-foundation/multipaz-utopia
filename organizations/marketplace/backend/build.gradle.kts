@@ -17,9 +17,6 @@ application {
 val marketplaceBaseUrl = providers.gradleProperty("marketplaceBaseUrl").orNull
 
 tasks.named<JavaExec>("run") {
-    // Keep the Marketplace backend on its documented port.
-    args("-param", "server_port=8010")
-
     // Override base_url when wallet/device cannot reach localhost.
     if (!marketplaceBaseUrl.isNullOrBlank()) {
         args("-param", "base_url=$marketplaceBaseUrl")

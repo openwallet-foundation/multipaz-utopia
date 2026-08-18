@@ -18,7 +18,10 @@ import org.multipaz.utopia.knowntypes.addUtopiaTypes
  *
  * Build and start the server using
  *
- * ```./gradlew multipaz-records-server:run```
+ * ```./gradlew :organizations:registry:backend:run```
+ *
+ * Serves on port 8004 by default. The admin password needed by `/identity/load` is generated per run and
+ * logged at startup; pin it with `--args="-param admin_password=<password>"`.
  */
 class Main {
     companion object {

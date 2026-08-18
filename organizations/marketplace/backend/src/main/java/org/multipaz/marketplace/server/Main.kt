@@ -22,7 +22,11 @@ import org.multipaz.verifier.customization.VerifierAssistant
  *
  * Build and start the server using:
  *
- * ```./gradlew multipaz-utopia:organizations:marketplace:backend:run```
+ * ```./gradlew :organizations:marketplace:backend:run```
+ *
+ * Serves on port 8010 and expects the records server on `http://localhost:8004` by default — both come from
+ * `src/main/resources/resources/default_configuration.json`, along with the `payee_account`
+ * purchases are billed to. See `organizations/marketplace/README.md`.
  */
 class Main {
     companion object {

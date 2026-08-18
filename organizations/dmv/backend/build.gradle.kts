@@ -10,6 +10,12 @@ application {
     mainClass.set("org.multipaz.utopia.organizations.dmv.server.Main")
 }
 
+val adminPassword = providers.gradleProperty("adminPassword").getOrElse("multipaz")
+
+tasks.named<JavaExec>("run") {
+    args("-param", "admin_password=$adminPassword")
+}
+
 kotlin {
     jvmToolchain(17)
 

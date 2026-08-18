@@ -18,6 +18,12 @@ import org.multipaz.utopia.knowntypes.addUtopiaTypes
  * ./gradlew :organizations:bank_of_utopia:backend:run
  * ```
  *
+ * Serves on port 8017 and expects a Registry on `http://localhost:8004` by default — it reads cardholder
+ * records from that server and enrolls its signing identity with that server's CA. Enrolling
+ * matters: without it the issuer self-enrolls, and UPay and the Marketplace — which trust only the
+ * Registry's IACA root — refuse the cards it issues. Override both URLs with
+ * `--args="-param enrollment_server_url=<url> -param system_of_record_url=<url>"`.
+ *
  * Issuer identity (display name, locale, logo, slug) is read from JSON config —
  * see `src/main/resources/resources/default_configuration.json`.
  */

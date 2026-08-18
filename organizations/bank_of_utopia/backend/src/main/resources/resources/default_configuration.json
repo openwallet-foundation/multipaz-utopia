@@ -1,5 +1,7 @@
 {
   "server_port": 8017,
+  "enrollment_server_url": "http://localhost:8004",
+  "system_of_record_url": "http://localhost:8004",
   "ca_trust_servers": [
     "*.multipaz.org/**",
     "sorotokin.com/**"

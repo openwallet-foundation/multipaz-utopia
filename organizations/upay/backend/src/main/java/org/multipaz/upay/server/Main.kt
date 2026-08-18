@@ -22,9 +22,13 @@ import org.multipaz.verifier.server.configureVerifier
 /**
  * Main entry point to launch the server.
  *
- * Build and start with local records server:
+ * Build and start the server using:
  *
- * ```./gradlew multipaz-upay-server:run --args="-param enrollment_server_url=http://localhost:8004"```
+ * ```./gradlew :organizations:upay:backend:run```
+ *
+ * Serves on port 8009 by default and expects the records server on `http://localhost:8004` — both come from
+ * `src/main/resources/resources/default_configuration.json`. Point it elsewhere with
+ * `--args="-param enrollment_server_url=<url>"`.
  */
 class Main {
     companion object {

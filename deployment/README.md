@@ -90,9 +90,14 @@ localhost/multipaz-utopia/server-bundle  2026-06-12-17_31_24  d08ca1918001  54 m
 podman run --rm -p 8100:8100 multipaz-utopia/server-bundle:latest
 ```
 
-Then open http://localhost:8100 in your browser.
+Then open http://localhost:8100 in your browser. On the first run the Registry is seeded from
+[`docker/init/records.json`](docker/init/records.json), and the admin password is `multipaz`.
 
 To stop: press `Ctrl+C`
+
+There is also a `./gradlew :deployment:runDockerImage` task, but it publishes ports 8000–8010 and
+not 8100, so with the default `MODE=proxy` the nginx front door is unreachable — prefer the
+`podman run` above.
 
 ### Shell in the container
 
@@ -108,14 +113,19 @@ podman exec -it <container_id> /bin/bash
 
 All services are available through the nginx proxy on port 8100:
 
-| Service        | URL                                   |
-|----------------|---------------------------------------|
-| Web Frontend   | http://localhost:8100/                |
-| Registry       | http://localhost:8100/registry/       |
-| Utopia DMV     | http://localhost:8100/dmv/            |
-| Bank of Utopia | http://localhost:8100/bank_of_utopia/ |
-| UPay service   | http://localhost:8100/upay/           |
-| Marketplace        | http://localhost:8100/marketplace/        |
+| Service          | URL                                   | Service port |
+|------------------|---------------------------------------|--------------|
+| Web Frontend     | http://localhost:8100/                | —            |
+| Registry         | http://localhost:8100/registry/       | 8004         |
+| Utopia DMV       | http://localhost:8100/dmv/            | 8002         |
+| Bank of Utopia   | http://localhost:8100/bank_of_utopia/ | 8001         |
+| UPay service     | http://localhost:8100/upay/           | 8009         |
+| Marketplace      | http://localhost:8100/marketplace/    | 8010         |
+| Marketplace MCP  | http://localhost:8100/mcp             | 8011         |
+
+The service ports are what nginx proxies to inside the container, and what `MODE=direct` exposes
+instead of the proxy. They are not always the port a server uses when run on its own from Gradle —
+Bank of Utopia, for instance, defaults to 8017 outside the bundle.
 
 ## Deploying to a Server
 
@@ -160,8 +170,8 @@ Use option `-v </your/db/folder>:/app/data:z` to mount the folder where database
 to a folder on your host machine. This way data will not be erased between the container runs.
 Similarly `-v </your/logs/folder>:/app/logs:z` will ensure that log files are preserved.
 
-Note: this will deploy the bundle as HTTP service on port 8000, you would still need to use your
-environment to expose it as HTTP service. Also, if not running on the root of the domain (e.g.
+Note: this will deploy the bundle as an HTTP service on port 8100, you would still need to use your
+environment to expose it as HTTPS service. Also, if not running on the root of the domain (e.g.
 your BASE_URL is `https://foo.com/bar` rather than `https://foo.bar`), handlers for `/.well-known` 
 urls have to be mapped correctly, e.g. using ngnix for `dmv` service:
 ```
@@ -185,9 +195,29 @@ and must be removed at very least in the container environment.
 
 ### Environment Variables
 
-| Variable | Default                 | Description                                                                     |
-|----------|-------------------------|---------------------------------------------------------------------------------|
-| `BASE_URL` | `http://localhost:8100` | Base URL for all services (used in protocol messages)                           |
-| `MODE` | `proxy`                 | `proxy` for nginx routing, `direct` for port-only access to individual services |
-| `ADMIN_PASS` | `multipaz`              | default is only used for localhost deployment, otherwise it must be specified
+Read by [`docker/start-servers.sh`](docker/start-servers.sh) and passed on to the services.
+
+| Variable | Default | Description |
+|---|---|---|
+| `BASE_URL` | `http://localhost:8100` | Base URL for all services (used in protocol messages) |
+| `MODE` | `proxy` | `proxy` for nginx routing, `direct` for port-only access to individual services |
+| `ADMIN_PASS` | `multipaz` | Admin password for the Registry, DMV, and Bank of Utopia. The default applies only to the localhost `BASE_URL`; any other deployment must set it |
+| `PAYEE_ACCOUNT` | (unset) | Merchant account the Marketplace is paid into. Unset ⇒ the demo account `10000001` from the Marketplace server's own defaults, which only exists in a Registry seeded from `docker/init/records.json` — set this to a real account for any deployment against another System of Record |
+| `EXTRA_PARAMS` | (empty) | Raw `-param key=value` pairs appended to every service's command line |
+
+### Per-service configuration
+
+Each service builds its configuration from three layers, later ones overriding earlier:
+
+1. **`default_configuration.json`** inside the service's own jar — the values committed under
+   `organizations/<org>/backend/src/main/resources/resources/`.
+2. **`docker/services/<service>.conf`**, passed as `-config`. Use these for values that belong to
+   the bundle rather than to the server itself; `registry.conf` names the fictional state, and the
+   rest are `{}`.
+3. **`-param key=value`** from `start-servers.sh`, which is where the bundle's ports, `base_url`,
+   trust globs, SQLite paths, and the environment variables above are applied. Last one wins, so
+   these override both layers below.
+
+Because layer 1 ships in the jar, a server started outside this bundle still comes up with working
+defaults — see the [root README](../README.md#configuration).
 
