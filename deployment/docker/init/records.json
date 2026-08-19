@@ -199,5 +199,24 @@
                 }
             }
         }
+    },
+    {
+        "core": {
+            "given_name": "Utopia Wholesale",
+            "family_name": "POS",
+            "utopia_id_number": "9000-0002"
+        },
+        "records": {
+            "payment": {
+                "merchant": {
+                    "instance_title": "Merchant",
+                    "issuer_name": "Utopia Wholesale",
+                    "holder_name": "Utopia Wholesale POS",
+                    "issue_date": "2026-01-01",
+                    "expiry_date": "2031-01-01",
+                    "account_number": "20000001"
+                }
+            }
+        }
     }
 ]
