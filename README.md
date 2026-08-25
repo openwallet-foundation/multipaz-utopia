@@ -113,6 +113,11 @@ UPay, Marketplace     ── leaf(PAYMENT_PROCESSOR)  ──►  authenticate pa
 DMV, Bank             ── leaf(RECORDS_CLIENT)     ──►  authenticate to the System of Record
 ```
 
+The one exception is `root_identities.payment_processor` in the Registry's
+`default_configuration.json`: a static CA root (`pp-root`) shared with the
+Wholesale POS sample's terminal backend, which holds a pre-issued leaf (`pp-leaf`) rather than
+enrolling.
+
 ### Seeding the Registry
 
 A fresh Registry has no identities, so issuance and payments have nothing to work with. Load the
