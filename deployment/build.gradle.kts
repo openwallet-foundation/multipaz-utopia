@@ -22,35 +22,38 @@ tasks.register("collectDependencies") {
     description = "Collect thin server JARs and shared dependency JARs into a staging directory"
     group = "deployment"
 
-    // Depend on jar tasks for server projects plus their full runtime classpath build dependencies
-    for (name in serverProjects) {
-        val serverProject = project(":${name}")
-        dependsOn(serverProject.tasks.named("jar"))
-        dependsOn(serverProject.configurations.getByName("runtimeClasspath").buildDependencies)
+    val serverJars = serverProjects.associate { name ->
+        val baseName = name.removeSuffix(":backend")
+        val shortName = baseName.substring(baseName.lastIndexOf(':') + 1)
+        shortName to project(":${name}").tasks.named<Jar>("jar").flatMap { it.archiveFile }
+    }
+    val runtimeClasspaths = serverProjects.map { name ->
+        project(":${name}").configurations.getByName("runtimeClasspath")
     }
 
     val stagingDir = layout.buildDirectory.dir("docker-staging")
 
+    inputs.files(serverJars.values).withPropertyName("serverJars")
+    inputs.files(runtimeClasspaths).withPropertyName("runtimeClasspaths")
     outputs.dir(stagingDir)
 
     doLast {
         val jarsDir = stagingDir.get().dir("jars").asFile
         val libsDir = stagingDir.get().dir("libs").asFile
+
+        jarsDir.deleteRecursively()
+        libsDir.deleteRecursively()
         jarsDir.mkdirs()
         libsDir.mkdirs()
 
+        // Copy the thin server JARs
+        for ((shortName, jarFile) in serverJars) {
+            jarFile.get().asFile.copyTo(File(jarsDir, "${shortName}.jar"), overwrite = true)
+        }
+
         // Collect all unique dependency JARs from all server projects
         val seenLibs = mutableSetOf<String>()
-        for (name in serverProjects) {
-            val serverProject = project(":${name}")
-            val runtimeCp = serverProject.configurations.getByName("runtimeClasspath")
-
-            // Copy the thin server JAR
-            val baseName = name.removeSuffix(":backend")
-            val shortName = baseName.substring(baseName.lastIndexOf(':') + 1)
-            val jarFile = serverProject.tasks.getByName<Jar>("jar").archiveFile.get().asFile
-            jarFile.copyTo(File(jarsDir, "${shortName}.jar"), overwrite = true)
-
+        for (runtimeCp in runtimeClasspaths) {
             // Copy dependency JARs (deduplicated by filename)
             for (dep in runtimeCp.resolve()) {
                 if (dep.name.endsWith(".jar") && seenLibs.add(dep.name)) {
