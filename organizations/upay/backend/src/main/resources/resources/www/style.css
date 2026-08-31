@@ -1,19 +1,30 @@
+/* ==========================================================================
+   UPay Payment Service — styles
+   Driven by the shared Utopia design tokens. Local names below are thin
+   aliases onto those tokens, so the rules that follow need no edit and the
+   whole universe still re-themes from one file. Change colours in
+   shared/theme/common/resources/www/utopia-theme.css, never here.
+   ========================================================================== */
+
+@import "utopia-theme.css";
+
 :root {
-    --page-bg: #F0EADD;
-    --card-bg: #FBF8F1;
-    --border: #E7DFCF;
-    --ink: #1E1610;
-    --ink-soft: #6F6657;
-    --label: #2C2722;
-    --input-bg: #FFFFFF;
-    --input-border: #D9D0BE;
-    --placeholder: #A89F8C;
-    --success-bg: #7E976E;
-    --success-ink: #20300E;
-    --error-bg: #B5755E;
-    --error-ink: #3E1C12;
-    --danger: #B5755E;
-    --radius: 12px;
+    --page-bg:      var(--utopia-bg);
+    --card-bg:      var(--utopia-surface);
+    --border:       var(--utopia-border);
+    --ink:          var(--utopia-ink);
+    --ink-soft:     var(--utopia-ink-soft);
+    --label:        var(--utopia-ink);
+    --input-bg:     var(--utopia-surface-raised);
+    --input-border: var(--utopia-border-strong);
+    --placeholder:  var(--utopia-ink-faint);
+    --success-bg:   var(--utopia-success);
+    --success-ink:  var(--utopia-success-ink);
+    --error-bg:     var(--utopia-danger);
+    /* Cream on the shared red. */
+    --error-ink:    var(--utopia-ink-inverse);
+    --danger:       var(--utopia-danger);
+    --radius:       var(--utopia-radius);
 }
 
 * {
@@ -28,27 +39,122 @@ html, body {
 body {
     background-color: var(--page-bg);
     color: var(--ink);
-    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--utopia-font-sans);
     font-size: 15px;
     line-height: 1.45;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 48px 16px;
+    margin: 0;
 }
 
-.page {
-    width: 100%;
-    max-width: 480px;
+/* Page column. The artboards put UPay on a two-column split: the explanation
+   on the left, the form card on the right. */
+.up-page {
+    max-width: var(--utopia-page-max);
+    margin: 0 auto;
+    padding: 48px 28px 40px;
+}
+
+.up-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .up-split { grid-template-columns: 1fr; gap: 28px; }
+    .up-page { padding: 32px 18px; }
+}
+
+/* The account statement is a single focused column rather than a split. On the
+   index the card is a grid item and takes its spacing from the grid gap; here
+   it follows the lead paragraph directly and needs its own. */
+.up-page--narrow {
+    max-width: 620px;
+}
+
+.up-page--narrow .up-card {
+    margin-top: 26px;
+}
+
+.up-eyebrow {
+    font-size: 12px;
+    letter-spacing: var(--utopia-tracking-label);
+    text-transform: uppercase;
+    color: var(--utopia-emphasis);
+    margin: 0 0 10px;
+}
+
+.up-title {
+    font-family: var(--utopia-font-display);
+    font-size: 42px;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin: 0 0 12px;
+}
+
+.up-lead {
+    max-width: 34em;
+    margin: 0;
+    color: color-mix(in srgb, var(--utopia-ink) 62%, transparent);
+}
+
+/* Dashed panel — the artboards use a dashed edge for explanatory asides, to
+   separate them from the solid panels that carry real controls. */
+.up-facts {
+    border: 1px dashed var(--utopia-border-strong);
+    border-radius: var(--utopia-radius);
+    padding: 26px;
+    margin-top: 26px;
+}
+
+.up-facts h5 {
+    font-family: var(--utopia-font-display);
+    font-size: 16px;
+    margin: 0 0 12px;
+}
+
+.up-fact {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: color-mix(in srgb, var(--utopia-ink) 72%, transparent);
+}
+
+.up-fact:last-child { margin-bottom: 0; }
+
+.up-fact-mark {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    margin-top: 3px;
+    border-radius: 50%;
+    background: var(--utopia-accent-soft);
+    color: var(--utopia-emphasis);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.up-card {
+    background-color: var(--utopia-surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--utopia-radius);
+    padding: 30px;
+    box-shadow: var(--utopia-shadow-md);
 }
 
 /* ---- Status banner (above the card) ---- */
 
 .banner {
+    max-width: var(--utopia-page-max);
+    margin: 0 auto;
     border-radius: var(--radius);
     padding: 14px 18px;
     margin-bottom: 18px;
-    box-shadow: 0 6px 20px rgba(30, 22, 16, 0.10);
+    box-shadow: var(--utopia-shadow-sm);
 }
 
 .banner[hidden] {
@@ -91,49 +197,6 @@ body {
 
 /* ---- Card ---- */
 
-.card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px 28px 20px;
-    box-shadow: 0 10px 30px rgba(30, 22, 16, 0.06);
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.brand-icon {
-    width: 40px;
-    height: 40px;
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ink);
-}
-
-.brand-icon svg {
-    width: 32px;
-    height: 32px;
-}
-
-.brand-text h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-}
-
-.brand-text .subtitle {
-    margin: 2px 0 0;
-    font-size: 13px;
-    color: var(--ink-soft);
-}
-
 /* ---- Form ---- */
 
 .field-group {
@@ -149,7 +212,6 @@ body {
     margin-bottom: 6px;
 }
 
-
 input[type=text],
 input[type=number],
 select {
@@ -159,16 +221,16 @@ select {
     color: var(--ink);
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
-    border-radius: 8px;
+    border-radius: var(--utopia-radius-control);
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color var(--utopia-transition), box-shadow var(--utopia-transition);
 }
 
 select {
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%236F6657' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m1 1 5 5 5-5'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%236B5E4E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m1 1 5 5 5-5'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 32px;
@@ -178,7 +240,7 @@ input[type=text]:focus,
 input[type=number]:focus,
 select:focus {
     border-color: var(--ink);
-    box-shadow: 0 0 0 3px rgba(30, 22, 16, 0.08);
+    box-shadow: var(--utopia-focus-ring);
 }
 
 input::placeholder {
@@ -190,7 +252,7 @@ select.invalid,
 input.invalid:focus,
 select.invalid:focus {
     border-color: var(--danger);
-    box-shadow: 0 0 0 3px rgba(181, 117, 94, 0.15);
+    box-shadow: var(--utopia-focus-ring-danger);
 }
 
 .field-error {
@@ -216,9 +278,10 @@ select.invalid:focus {
 }
 
 .check input {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--ink);
+    width: 17px;
+    height: 17px;
+    flex: none;
+    accent-color: var(--utopia-accent);
     margin: 0;
 }
 
@@ -229,17 +292,17 @@ select.invalid:focus {
     padding: 13px;
     font-size: 15px;
     font-weight: 600;
-    color: var(--card-bg);
-    background-color: var(--ink);
+    color: var(--utopia-bg);
+    background-color: var(--utopia-accent);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--utopia-radius-control);
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color var(--utopia-transition);
 }
 
 #pay-btn:hover,
 #lookup-btn:hover {
-    background-color: #2C2118;
+    background-color: var(--utopia-accent-hover);
 }
 
 #pay-btn:disabled,
@@ -262,9 +325,9 @@ select.invalid:focus {
     color: var(--ink-soft);
     background-color: transparent;
     border: 1px solid var(--input-border);
-    border-radius: 8px;
+    border-radius: var(--utopia-radius-control);
     cursor: pointer;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: border-color var(--utopia-transition), color var(--utopia-transition);
 }
 
 .secondary-action:hover {
@@ -295,6 +358,7 @@ select.invalid:focus {
 }
 
 .balance-amount {
+    font-family: var(--utopia-font-display);
     font-size: 34px;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -331,9 +395,9 @@ select.invalid:focus {
     color: var(--ink-soft);
     background-color: transparent;
     border: 1px solid var(--input-border);
-    border-radius: 999px;
+    border-radius: var(--utopia-radius-pill);
     cursor: pointer;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: border-color var(--utopia-transition), color var(--utopia-transition);
 }
 
 #refresh-btn:hover {

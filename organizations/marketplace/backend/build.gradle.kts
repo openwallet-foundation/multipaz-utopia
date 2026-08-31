@@ -65,10 +65,9 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-// Copy marketplace frontend resources directly into the backend's own resource output so
-// they appear on the classpath before any dependency JARs (including multipaz-verifier-server
-// which ships its own www/index.html at the same path).
+// to inject the utopia stylesheets and chrome script (see shared/theme/README)
 tasks.named<ProcessResources>("processResources") {
     from(project(":organizations:marketplace:frontend").file("src/main/resources"))
+    from(rootProject.file("shared/theme/common"))
 }
 

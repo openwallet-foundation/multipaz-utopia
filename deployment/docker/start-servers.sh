@@ -103,7 +103,7 @@ service records registry org.multipaz.records.server.Main 8004 -param admin_pass
 # them out through BASE_URL and back.
 service verifier upay org.multipaz.upay.server.Main 8009 -param registry_url=http://localhost:8004
 service verifier marketplace org.multipaz.marketplace.server.Main 8010 ${PAYEE_ACCOUNT:+-param payee_account=$PAYEE_ACCOUNT}
-service openid4vci bank_of_utopia org.multipaz.utopia.organizations.bankofutopia.server.Main 8001 -param admin_password=$ADMIN_PASS
+service openid4vci bank_of_utopia org.multipaz.utopia.organizations.bankofutopia.server.Main 8017 -param admin_password=$ADMIN_PASS
 service openid4vci dmv org.multipaz.utopia.organizations.dmv.server.Main 8002 -param admin_password=$ADMIN_PASS
 
 # MCP storefront (Node) — the agentic front-door onto the marketplace. Reaches the marketplace
@@ -152,7 +152,7 @@ echo "Multipaz Utopia Server Bundle is running"
 if [ "$MODE" = "proxy" ]; then
     echo "Access via: ${BASE_URL}"
 else
-    echo "Access services directly on ports 8001-8009"
+    echo "Access services directly on ports 8002, 8004, 8009-8011 and 8017"
 fi
 echo "=========================================="
 echo ""

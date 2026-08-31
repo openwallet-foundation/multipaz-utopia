@@ -7,59 +7,75 @@
     <title>OWF Multipaz UPay service</title>
     <script src="verify_credentials.js"></script>
     <script src="upay.js"></script>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css"/>
+    <script>window.UTOPIA_SERVICE = "upay";</script>
+    <script src="utopia-chrome.js"></script>
 </head>
 <body>
-<main class="page">
+<!-- Header and footer come from utopia-chrome.js, shared with every service. -->
+<main class="up-page">
     <div id="banner" class="banner" hidden></div>
 
-    <div class="card">
-        <div class="card-header">
-            <div class="brand-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3Z"/>
-                    <path d="M12 8v8M9.5 9.5h3.2a1.8 1.8 0 0 1 0 3.6H10m-.5 0h3.2a1.8 1.8 0 0 1 0 3.6"/>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h1>UPay Payment Service</h1>
-                <p class="subtitle">Secure Payment Portal</p>
+    <div class="up-split">
+        <div class="up-intro">
+            <p class="up-eyebrow">Secure payment portal</p>
+            <h1 class="up-title">UPay Payment Service</h1>
+            <p class="up-lead">Pick the account to pay, name an amount, and your wallet signs the
+                authorization.</p>
+
+            <div class="up-facts">
+                <h5>What the payee learns</h5>
+                <div class="up-fact">
+                    <span class="up-fact-mark">1</span>
+                    <span>That a valid payment credential authorized this exact amount.</span>
+                </div>
+                <div class="up-fact">
+                    <span class="up-fact-mark">2</span>
+                    <span>An account reference to settle against — never your card number.</span>
+                </div>
+                <div class="up-fact">
+                    <span class="up-fact-mark">3</span>
+                    <span>Nothing else. Not your name, your address, or your date of birth.</span>
+                </div>
             </div>
         </div>
 
-        <form id="pay-form" onsubmit="return false">
-            <div class="field-group">
-                <label for="account-select">Payee account number</label>
-                <select id="account-select"></select>
-                <input id="account" type="text" placeholder="Enter account number" autocomplete="off" hidden/>
-                <span id="account-error" class="field-error" hidden></span>
-            </div>
+        <div class="up-card">
+            <form id="pay-form" onsubmit="return false">
+                <div class="field-group">
+                    <label for="account-select">Payee account number</label>
+                    <select id="account-select"></select>
+                    <input id="account" type="text" placeholder="Enter account number"
+                           autocomplete="off" hidden/>
+                    <span id="account-error" class="field-error" hidden></span>
+                </div>
 
-            <div class="field-group">
-                <label for="amount">Payment amount</label>
-                <input id="amount" type="number" placeholder="e.g., 100.00"/>
-                <span id="amount-error" class="field-error" hidden></span>
-            </div>
+                <div class="field-group">
+                    <label for="amount">Payment amount</label>
+                    <input id="amount" type="number" placeholder="e.g., 100.00"/>
+                    <span id="amount-error" class="field-error" hidden></span>
+                </div>
 
-            <div class="field-group">
-                <label for="description">Description</label>
-                <input id="description" type="text" placeholder="Payment for invoice #123"/>
-            </div>
+                <div class="field-group">
+                    <label for="description">Description</label>
+                    <input id="description" type="text" placeholder="Payment for invoice #123"/>
+                </div>
 
-            <div class="field-group">
-                <span class="label">DC API Protocols</span>
-                <label class="check"><input id="protocol_iso" type="checkbox" checked="checked"/>ISO 18013-7 Annex C</label>
-                <label class="check"><input id="protocol_openid4vp" type="checkbox" checked="checked"/>OpenID4VP v1</label>
-            </div>
+                <div class="field-group">
+                    <span class="label">DC API protocols</span>
+                    <label class="check"><input id="protocol_iso" type="checkbox"
+                                                checked="checked"/>ISO 18013-7 Annex C</label>
+                    <label class="check"><input id="protocol_openid4vp" type="checkbox"
+                                                checked="checked"/>OpenID4VP v1</label>
+                </div>
 
-            <button type="button" id="pay-btn" onclick="run()">Pay Now</button>
-            <a class="secondary-action" href="account.html">View My Account</a>
-        </form>
+                <button type="button" id="pay-btn" onclick="run()">Pay now</button>
+                <a class="secondary-action" href="account.html">View my account</a>
+            </form>
 
-        <p class="card-footer">
-            &copy; 2026 Utopia Universe UPay Service.
-        </p>
+            <p class="card-footer">&copy; 2026 Utopia Universe UPay Service · simulated payments
+                only</p>
+        </div>
     </div>
 </main>
 </body>

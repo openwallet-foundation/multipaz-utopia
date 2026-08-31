@@ -1,5 +1,6 @@
 {
   "server_port": 8017,
+  "custom_head_html": "<script src=\"utopia-chrome.js\"></script>",
   "enrollment_server_url": "http://localhost:8004",
   "system_of_record_url": "http://localhost:8004",
   "ca_trust_servers": [

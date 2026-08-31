@@ -82,7 +82,7 @@ val RecordsApp = FC<MultipazProps> { props ->
                 className = ClassName("records-table-header")
                 th { + "Last name" }
                 th { + "First name" }
-                th { + "Utopia name" }
+                th { + "Utopia id" }
                 if (metadata?.issuerUrl != null) {
                     th { +"Credential offer" }
                 }

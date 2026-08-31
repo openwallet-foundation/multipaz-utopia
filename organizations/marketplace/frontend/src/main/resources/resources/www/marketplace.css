@@ -1,693 +1,439 @@
 /* ==========================================================================
-   Utopia Marketplace — Marketplace CSS
-   Dark editorial aesthetic matching the provided design mockup
+   Utopia Marketplace
+   --------------------------------------------------------------------------
+
+   Every value comes from the active palette. Change the appearance of the
+   whole universe in shared/theme/common/resources/www/utopia-theme.css.
+
+   The header and footer are not here — utopia-chrome.js mounts the shared
+   Utopia chrome on every service.
    ========================================================================== */
 
-:root {
-    --bg:          #f5f0e8;
-    --bg-dark:     #1a1008;
-    --text:        #1a1008;
-    --text-muted:  #6b5e4e;
-    --accent:      #5c7a3e;      /* forest green — "Acquire" button */
-    --accent-warm: #c8a96e;      /* gold — price, labels */
-    --border:      #d8cfc0;
-    --white:       #ffffff;
-    --font-serif:  'Georgia', 'Times New Roman', serif;
-    --font-sans:   'Helvetica Neue', Arial, sans-serif;
-}
+@import "utopia-theme.css";
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-sans);
+    margin: 0;
+    background: var(--utopia-bg);
+    color: var(--utopia-ink);
+    font-family: var(--utopia-font-sans);
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.55;
 }
 
 a { color: inherit; text-decoration: none; }
 
-/* ==========================================================================
-   Header
-   ========================================================================== */
-.site-header {
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+h1, h2, h3 {
+    font-family: var(--utopia-font-display);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.4em;
 }
 
-.header-inner {
-    max-width: 1200px;
+/* -- Page column ---------------------------------------------------------- */
+
+.mk-page {
+    max-width: var(--utopia-page-max);
     margin: 0 auto;
-    padding: 0 2rem;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    gap: 3rem;
+    padding: 48px 28px 40px;
 }
 
-.site-logo {
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
+.mk-page--narrow { padding-top: 40px; }
 
-nav {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-}
-
-nav a {
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
+.mk-eyebrow {
+    font-size: 12px;
+    letter-spacing: var(--utopia-tracking-label);
     text-transform: uppercase;
-    color: var(--text-muted);
-    padding-bottom: 2px;
-    transition: color 0.15s;
+    color: var(--utopia-emphasis);
+    margin: 0 0 14px;
 }
 
-nav a:hover,
-nav a.nav-active {
-    color: var(--text);
-    border-bottom: 2px solid var(--accent-warm);
+.mk-hero {
+    font-size: clamp(2.2rem, 5vw, 58px);
+    line-height: 1.04;
+    max-width: 12em;
+    margin: 0 0 16px;
 }
 
-/* ==========================================================================
-   Archive index — intro
-   ========================================================================== */
-.archive-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 3rem 2rem 4rem;
+.mk-lead {
+    max-width: 38em;
+    font-size: 17px;
+    margin: 0;
+    color: color-mix(in srgb, var(--utopia-ink) 62%, transparent);
 }
 
-.archive-intro {
-    margin-bottom: 2.5rem;
+.mk-finePrint {
+    margin: 26px 0 0;
+    font-size: 12px;
+    color: color-mix(in srgb, var(--utopia-ink) 50%, transparent);
 }
 
-.release-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent-warm);
-    margin-bottom: 0.75rem;
-}
+/* -- Aisles --------------------------------------------------------------- */
 
-.archive-intro h1 {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.15;
-    margin-bottom: 1rem;
-}
+.mk-aisle { margin-top: 44px; }
 
-.archive-sub {
-    color: var(--text-muted);
-    max-width: 520px;
-    font-size: 0.9rem;
-}
-
-/* ==========================================================================
-   Product grid
-   ========================================================================== */
-/* Aisle sections */
-.aisle {
-    margin-bottom: 3rem;
-}
-
-.aisle-head {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.6rem;
-    margin-bottom: 1.5rem;
+.mk-aisle-head {
     display: flex;
     align-items: baseline;
-    gap: 1rem;
+    gap: 14px;
     flex-wrap: wrap;
+    border-bottom: 1px solid var(--utopia-border);
+    padding-bottom: 10px;
+    margin-bottom: 22px;
 }
 
-.aisle-title {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
+.mk-aisle-head h3 { margin: 0; font-size: 25px; }
+
+.mk-aisle-note {
+    font-size: 13px;
+    color: color-mix(in srgb, var(--utopia-ink) 58%, transparent);
 }
 
-.aisle-blurb {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.product-grid {
+.mk-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 1.75rem 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
 }
 
-.product-card {
+@media (max-width: 900px) { .mk-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .mk-grid { grid-template-columns: 1fr; } }
+
+/* -- Product tile --------------------------------------------------------
+   Borderless by design: the artwork block IS the card, and the text sits
+   underneath on the page ground. */
+
+.mk-tile {
     display: block;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
+    transition: transform var(--utopia-transition);
 }
 
-.product-card:hover { opacity: 0.9; transform: translateY(-3px); }
+.mk-tile:hover { transform: translateY(-3px); }
+.mk-tile:hover .mk-art { box-shadow: var(--utopia-shadow-lg); }
 
-.card-image-wrap {
+.mk-art {
     position: relative;
-    overflow: hidden;
-    background: #ece5d8;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    aspect-ratio: 1/1;
-}
-
-.card-image-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.badge {
-    position: absolute;
-    top: 0.75rem;
-    left: 0.75rem;
-    background: var(--bg-dark);
-    color: var(--bg);
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 0.25rem 0.5rem;
-}
-
-.card-info {
-    padding: 0.75rem 0;
-}
-
-.card-info h2 {
-    font-family: var(--font-serif);
-    font-size: 1.05rem;
-    margin-bottom: 0.2rem;
-}
-
-.card-sub {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.4rem;
-}
-
-.card-price {
-    font-size: 0.95rem;
-    color: var(--accent-warm);
-    font-weight: 600;
-}
-
-.card-unit {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-}
-
-/* Age-restricted badge on cards */
-.badge-age {
-    background: #8a2f2f;
-    color: #fff;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    border-radius: 4px;
-}
-
-/* ==========================================================================
-   Tasting Room banner
-   ========================================================================== */
-.tasting-banner {
-    background: var(--accent);
-    color: var(--white);
-    padding: 2.5rem 3rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
+    justify-content: center;
+    height: 230px;
+    border-radius: var(--utopia-radius);
+    transition: box-shadow var(--utopia-transition);
+}
+
+.mk-glyph { font-size: 76px; line-height: 1; }
+
+/* The artboards wash every image so it sits back into the warm page rather
+   than on top of it. */
+.washed { filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94); }
+
+.mk-age {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--utopia-emphasis);
+    color: var(--utopia-bg);
+    padding: 4px 10px;
+    border-radius: var(--utopia-radius-pill);
+}
+
+.mk-name {
+    display: block;
+    font-family: var(--utopia-font-display);
+    font-size: 18px;
+    margin-top: 14px;
+}
+
+.mk-kicker {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--utopia-ink-soft);
+    margin-top: 4px;
+}
+
+.mk-priceRow { display: block; margin-top: 8px; font-size: 15px; }
+.mk-price { font-weight: 700; color: var(--utopia-emphasis); }
+.mk-unit { font-size: 12px; color: var(--utopia-ink-soft); }
+
+/* -- Age call-out band ----------------------------------------------------
+   Sage, not terracotta: the artboards give the second voice this band so it
+   reads as information rather than as a primary action. */
+
+.mk-banner {
+    margin-top: 48px;
+    border-radius: var(--utopia-radius);
+    background: var(--utopia-accent-2);
+    color: var(--utopia-bg);
+    padding: 36px;
+    display: flex;
+    gap: 34px;
+    align-items: center;
     flex-wrap: wrap;
 }
 
-.tasting-text h3 {
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
-    margin-bottom: 0.4rem;
-}
+.mk-banner-text { flex: 1; min-width: 300px; }
+.mk-banner-text h3 { margin: 0 0 8px; color: var(--utopia-bg); font-size: 25px; }
+.mk-banner-text p { margin: 0; opacity: 0.92; max-width: 44em; }
 
-.tasting-text p {
-    font-size: 0.85rem;
-    opacity: 0.85;
-}
-
-.btn-tasting {
-    background: var(--accent-warm);
-    color: var(--bg-dark);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.75rem;
-    font-family: var(--font-sans);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+.mk-banner-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--utopia-font-display);
+    font-size: 14px;
+    padding: 12px 26px;
+    border-radius: var(--utopia-radius-pill);
+    background: var(--utopia-bg);
+    color: var(--utopia-ink);
     cursor: pointer;
-    white-space: nowrap;
+    transition: background-color var(--utopia-transition);
+}
+
+.mk-banner-btn:hover { background: var(--utopia-surface-raised); }
+
+/* -- Product detail ------------------------------------------------------- */
+
+.mk-back {
     display: inline-block;
+    margin-bottom: 20px;
+    font-family: var(--utopia-font-display);
+    font-size: 14px;
+    color: var(--utopia-accent);
+    padding: 4px 2px;
 }
 
-/* ==========================================================================
-   Product detail page
-   ========================================================================== */
-.product-main {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 2rem 2rem 4rem;
-}
+.mk-back:hover { color: var(--utopia-accent-hover); }
 
-.product-layout {
+.mk-product {
     display: grid;
-    grid-template-columns: 340px minmax(0, 1fr);
-    gap: 3.5rem;
-    margin-bottom: 4rem;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 56px;
     align-items: start;
 }
 
-@media (max-width: 768px) {
-    .product-layout { grid-template-columns: 1fr; gap: 2rem; }
+@media (max-width: 860px) { .mk-product { grid-template-columns: 1fr; gap: 28px; } }
+
+.mk-product-art {
+    height: 420px;
+    border-radius: var(--utopia-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Compact product thumbnail. Capped at the tile's native 400px so it only ever
-   downscales — the emoji glyph stays crisp — and pinned while the details scroll. */
-.product-image-col {
-    position: sticky;
-    top: 2rem;
+.mk-product-glyph { font-size: 150px; line-height: 1; }
+
+@media (max-width: 860px) {
+    .mk-product-art { height: 300px; }
+    .mk-product-glyph { font-size: 110px; }
 }
 
-.product-image-col img {
-    width: 100%;
-    aspect-ratio: 1/1;     /* match the square tile: no cropping */
-    object-fit: cover;
-    display: block;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(26, 16, 8, 0.12);
+.mk-product-name { font-size: clamp(2rem, 4vw, 46px); margin: 0 0 14px; }
+
+.mk-product-desc {
+    max-width: 34em;
+    margin: 0;
+    color: color-mix(in srgb, var(--utopia-ink) 72%, transparent);
 }
 
-@media (max-width: 768px) {
-    .product-image-col { position: static; max-width: 340px; }
+.mk-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+
+.mk-tag {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: var(--utopia-radius-pill);
+    background: var(--utopia-accent-soft);
+    color: var(--utopia-emphasis);
 }
 
-.product-info-col h1 {
-    font-family: var(--font-serif);
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+/* Purchase panel */
+.mk-buy {
+    margin-top: 26px;
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius);
+    padding: 24px;
+    background: var(--utopia-surface-raised);
+}
+
+.mk-buy-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+
+.mk-buy-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--utopia-ink-soft);
+    margin: 0;
+}
+
+.mk-buy-price {
+    font-family: var(--utopia-font-display);
+    font-size: 36px;
     line-height: 1.1;
-    margin-bottom: 1rem;
+    color: var(--utopia-emphasis);
+    margin: 2px 0 0;
 }
 
-.product-desc {
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-    font-size: 0.92rem;
-    line-height: 1.7;
-}
+.mk-buy-unit { font-size: 12px; color: var(--utopia-ink-soft); margin: 2px 0 0; }
+.mk-buy-avail { text-align: right; }
 
-.flavor-heading {
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-}
-
-.flavor-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1.75rem;
-}
-
-.flavor-tag {
-    background: var(--bg-dark);
-    color: var(--bg);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    padding: 0.3rem 0.75rem;
-}
-
-/* Purchase box */
-.product-purchase-box {
-    border: 1px solid var(--border);
-    padding: 1.25rem 1.5rem 1.5rem;
-    margin-bottom: 1.75rem;
-}
-
-.price-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 1rem;
-}
-
-.box-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.2rem;
-}
-
-.product-price-large {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    color: var(--text);
-}
-
-.availability-col { text-align: right; }
-
-.availability-text {
-    font-size: 0.8rem;
-    color: var(--accent-warm);
-}
-
-.btn-acquire {
-    width: 100%;
-    background: var(--accent);
-    color: var(--white);
-    border: none;
-    padding: 1rem;
-    font-size: 0.78rem;
-    font-family: var(--font-sans);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.15s;
-    margin-bottom: 0.6rem;
-}
-
-.btn-acquire:hover { background: #4a6832; }
-.btn-acquire:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.delivery-note {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    text-align: center;
-}
-
-/* Meta grid */
-.product-meta-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem 1.5rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.product-origin-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem 1.5rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
-}
-
-.meta-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.15rem;
-}
-
-.meta-value {
-    font-size: 0.88rem;
-    color: var(--text);
-}
-
-/* Philosophy section */
-.philosophy-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-    border-top: 1px solid var(--border);
-    padding-top: 3rem;
-}
-
-@media (max-width: 768px) {
-    .philosophy-section { grid-template-columns: 1fr; gap: 2rem; }
-}
-
-.philosophy-text h2 {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.philosophy-text p {
-    font-size: 0.88rem;
-    line-height: 1.8;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-}
-
-.read-more-link {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--text);
-    padding-bottom: 1px;
-}
-
-.philosophy-images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-}
-
-.philosophy-images img {
-    width: 100%;
-    aspect-ratio: 3/4;
-    object-fit: cover;
-    display: block;
-}
-
-/* Product note / about band */
-.product-note {
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
-    max-width: 720px;
-}
-
-.product-note h2 {
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
-    margin-bottom: 0.75rem;
-}
-
-.product-note p {
-    font-size: 0.9rem;
-    line-height: 1.8;
-    color: var(--text-muted);
-}
-
-/* "Age verified" confirmation line in the success dialog */
-.age-ok {
-    margin-top: 0.75rem !important;
-    color: var(--accent) !important;
+.mk-buy-stock {
+    font-size: 14px;
     font-weight: 600;
+    color: var(--utopia-accent-2);
+    margin: 2px 0 0;
 }
 
-/* ==========================================================================
-   Overlays
-   ========================================================================== */
-.result-overlay {
+.mk-cta {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    font-family: var(--utopia-font-display);
+    font-size: 15px;
+    color: var(--utopia-bg);
+    background: var(--utopia-accent);
+    border: none;
+    border-radius: var(--utopia-radius-pill);
+    cursor: pointer;
+    transition: background-color var(--utopia-transition);
+}
+
+.mk-cta:hover { background: var(--utopia-accent-hover); }
+.mk-cta:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.mk-buy-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--utopia-ink-soft);
+    margin: 10px 0 0;
+}
+
+/* Specs */
+.mk-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.mk-spec-k {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--utopia-ink-soft);
+    margin: 0;
+}
+
+.mk-spec-v { font-size: 15px; margin: 2px 0 0; }
+
+.mk-note {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--utopia-border);
+    max-width: 44em;
+}
+
+.mk-note h3 { font-size: 25px; }
+.mk-note p { color: color-mix(in srgb, var(--utopia-ink) 68%, transparent); margin: 0; }
+
+/* -- Dialogs -------------------------------------------------------------- */
+
+.mk-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(26, 16, 8, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 500;
-    padding: 1rem;
+    display: grid;
+    place-items: center;
+    padding: var(--utopia-radius);
+    background: var(--utopia-scrim);
 }
 
-.result-overlay.hidden { display: none; }
+.mk-overlay.hidden { display: none; }
 
-.result-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 2.5rem;
-    max-width: 440px;
-    width: 100%;
+.mk-dialog {
+    width: min(440px, 100%);
+    background: var(--utopia-surface-raised);
+    border-radius: var(--utopia-radius);
+    box-shadow: var(--utopia-shadow-lg);
+    padding: 32px;
     text-align: center;
 }
 
-.result-approved { border-top: 4px solid var(--accent); }
-.result-declined  { border-top: 4px solid #b94040; }
+.mk-dialog h3 { font-size: 22px; margin: 0 0 10px; }
+.mk-dialog p { font-size: 14px; color: var(--utopia-ink-soft); margin: 0 0 6px; }
 
-/* Status icon — a circular badge above the dialog title */
-.result-icon {
-    width: 52px;
-    height: 52px;
+.mk-dialog--ok { border-top: 4px solid var(--utopia-accent-2); }
+.mk-dialog--bad { border-top: 4px solid var(--utopia-danger); }
+
+.mk-dialog-icon {
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    margin: 0 auto 1rem;
+    margin: 0 auto 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
-    font-weight: bold;
+    font-size: 26px;
     line-height: 1;
 }
 
-.result-icon-success {
-    background: rgba(92, 122, 62, 0.12);
-    color: var(--accent);
-}
+.mk-dialog-icon--ok { background: var(--utopia-accent-2); color: var(--utopia-bg); }
+.mk-dialog-icon--bad { background: var(--utopia-danger); color: var(--utopia-bg); }
 
-.result-icon-error {
-    background: rgba(185, 64, 64, 0.12);
-    color: #b94040;
-}
-
-.result-box h2 {
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-}
-
-.result-box p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
-}
-
-/* Technical detail block — error codes / exception messages, set apart from the message */
-.result-detail {
-    margin-top: 1rem;
-    padding: 0.65rem 0.85rem;
-    background: rgba(185, 64, 64, 0.06);
-    border: 1px solid rgba(185, 64, 64, 0.25);
-    border-radius: 4px;
-    font-family: 'Menlo', 'Consolas', monospace;
-    font-size: 0.78rem;
+.mk-dialog-detail {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--utopia-danger-faint);
+    border: 1px solid var(--utopia-danger-line);
+    border-radius: var(--utopia-radius-sm);
+    font-family: var(--utopia-font-mono);
+    font-size: 12px;
     line-height: 1.5;
-    color: #8a3535;
+    color: var(--utopia-danger-strong);
     text-align: left;
     word-break: break-word;
 }
 
-.btn-close {
-    margin-top: 1.5rem;
-    background: var(--bg-dark);
-    color: var(--bg);
-    border: none;
-    padding: 0.6rem 1.75rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+.mk-dialog-close {
+    margin-top: 20px;
+    font-family: var(--utopia-font-display);
+    font-size: 14px;
+    padding: 10px 26px;
+    background: transparent;
+    color: var(--utopia-ink);
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius-pill);
     cursor: pointer;
+    transition: background-color var(--utopia-transition);
 }
 
-/* Loading box */
-.loading-box {
-    text-align: center;
-    padding: 3rem 2.5rem;
-}
+.mk-dialog-close:hover { background: color-mix(in srgb, var(--utopia-ink) 7%, transparent); }
 
-.spinner {
+.mk-dialog--loading { padding: 40px 32px; }
+
+.mk-spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
+    margin: 0 auto 16px;
+    border: 3px solid var(--utopia-border);
+    border-top-color: var(--utopia-accent);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 1rem;
+    animation: mk-spin 0.8s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes mk-spin { to { transform: rotate(360deg); } }
 
-/* ==========================================================================
-   Back navigation (product page)
-   ========================================================================== */
-.back-nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.25rem 2rem 0;
+/* "Age verified" line inside the success dialog. */
+.age-ok {
+    margin-top: 12px !important;
+    color: var(--utopia-accent-2) !important;
+    font-weight: 600;
 }
 
-.back-link {
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    transition: color 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0;          /* larger tap target on mobile */
-}
-
-.back-link:hover {
-    color: var(--text);
-}
-
-/* ==========================================================================
-   Footer
-   ========================================================================== */
-.site-footer {
-    background: var(--bg-dark);
-    color: #c8b89a;
-    padding: 3rem 2rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    max-width: 600px;
-    gap: 2rem;
-    max-width: 100%;
-}
-
-@media (max-width: 640px) {
-    .site-footer { grid-template-columns: 1fr; }
-}
-
-.footer-logo {
-    font-family: var(--font-serif);
-    font-size: 1rem;
-    color: #e8d9b0;
-    margin-bottom: 0.5rem;
-}
-
-.footer-tag {
-    font-size: 0.78rem;
-    opacity: 0.7;
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
-}
-
-.footer-copy {
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    opacity: 0.5;
-}
-
-.footer-heading {
-    font-size: 0.65rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #e8d9b0;
-    margin-bottom: 0.75rem;
-}
-
-.site-footer a {
-    display: block;
-    font-size: 0.78rem;
-    opacity: 0.7;
-    margin-bottom: 0.4rem;
-    transition: opacity 0.15s;
-}
-
-.site-footer a:hover { opacity: 1; }

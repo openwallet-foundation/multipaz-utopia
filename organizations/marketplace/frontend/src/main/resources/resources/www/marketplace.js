@@ -17,8 +17,9 @@ window.addEventListener("DOMContentLoaded", function () {
     const product = findProduct(id) || PRODUCTS[0];
     window._currentProduct = product;
 
-    document.getElementById("product-image").src = product.image;
-    document.getElementById("product-image").alt = product.name;
+    // Artwork is a palette tint plus the product's emoji (see catalog.js).
+    document.getElementById("product-art").style.background = product.tint;
+    document.getElementById("product-glyph").textContent = product.glyph;
     document.getElementById("product-name").textContent = product.name;
     document.getElementById("product-description").textContent = product.description;
     document.getElementById("product-price").textContent = "$" + product.price;
@@ -39,7 +40,7 @@ window.addEventListener("DOMContentLoaded", function () {
     const hl = document.getElementById("product-highlights");
     product.highlights.forEach(function (h) {
         const tag = document.createElement("span");
-        tag.className = "flavor-tag";
+        tag.className = "mk-tag";
         tag.textContent = h;
         hl.appendChild(tag);
     });
@@ -49,8 +50,8 @@ window.addEventListener("DOMContentLoaded", function () {
     Object.keys(product.specs).forEach(function (label) {
         const cell = document.createElement("div");
         cell.innerHTML =
-            '<p class="meta-label">' + escapeHtml(label) + "</p>" +
-            '<p class="meta-value">' + escapeHtml(product.specs[label]) + "</p>";
+            '<p class="mk-spec-k">' + escapeHtml(label) + "</p>" +
+            '<p class="mk-spec-v">' + escapeHtml(product.specs[label]) + "</p>";
         specsEl.appendChild(cell);
     });
 });
@@ -149,12 +150,12 @@ function showLoading(visible) {
 
 function showResult(approved, title, bodyHtml) {
     const icon = approved
-        ? '<div class="result-icon result-icon-success" aria-hidden="true">&#10003;</div>'
-        : '<div class="result-icon result-icon-error" aria-hidden="true">&#33;</div>';
+        ? '<div class="mk-dialog-icon mk-dialog-icon--ok" aria-hidden="true">&#10003;</div>'
+        : '<div class="mk-dialog-icon mk-dialog-icon--bad" aria-hidden="true">&#33;</div>';
     const box = document.getElementById("result-box");
-    box.className = "result-box " + (approved ? "result-approved" : "result-declined");
+    box.className = "mk-dialog " + (approved ? "mk-dialog--ok" : "mk-dialog--bad");
     document.getElementById("result-content").innerHTML =
-        icon + "<h2>" + escapeHtml(title) + "</h2>" + bodyHtml;
+        icon + "<h3>" + escapeHtml(title) + "</h3>" + bodyHtml;
     document.getElementById("result-overlay").classList.remove("hidden");
 }
 
@@ -162,7 +163,7 @@ function showResult(approved, title, bodyHtml) {
 function showError(title, bodyHtml, detail) {
     let html = bodyHtml;
     if (detail) {
-        html += '<div class="result-detail">' + escapeHtml(detail) + "</div>";
+        html += '<div class="mk-dialog-detail">' + escapeHtml(detail) + "</div>";
     }
     showResult(false, title, html);
 }

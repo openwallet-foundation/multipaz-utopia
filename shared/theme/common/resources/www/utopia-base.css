@@ -1,0 +1,277 @@
+/* ==========================================================================
+   Imported ONLY by the stylesheets that shadow a library jar's own style.css
+   (the Registry's legacy pages, and the OpenID4VCI issuer pages used by DMV
+   and Bank of Utopia). Those pages ship almost no classes, so styling plain
+   elements is what carries the theme there.
+
+   The designed front-ends — Marketplace, UPay and the Registry React app —
+   deliberately do NOT import this file. They import utopia-theme.css alone
+   and keep their own layouts.
+   ========================================================================== */
+
+@import "utopia-theme.css";
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    background-color: var(--utopia-bg);
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--utopia-bg);
+    color: var(--utopia-ink);
+    font-family: var(--utopia-font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+div#main {
+    max-width: var(--utopia-page-max);
+    margin: 0 auto;
+    padding: 48px 28px 40px;
+}
+
+body.wide #main {
+    max-width: 1320px;
+}
+
+@media (max-width: 640px) {
+    div#main { padding: 28px 18px 32px; }
+}
+
+/* -- Typography --------------------------------------------------------- */
+
+h1, h2, h3, h4 {
+    font-family: var(--utopia-font-display);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--utopia-ink);
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 0 0 0.15em;
+    letter-spacing: -0.01em;
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin: 0 0 0.75em;
+    color: var(--utopia-ink-soft);
+    font-weight: 400;
+}
+
+h3 {
+    font-size: 1.05rem;
+    margin: 0 0 0.5em;
+}
+
+h4 {
+    font-size: 0.9rem;
+    margin: 0 0 0.4em;
+}
+
+p {
+    max-width: var(--utopia-measure);
+    margin: 0 0 1em;
+}
+
+a {
+    color: var(--utopia-accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--utopia-accent-soft);
+    transition: color var(--utopia-transition), border-color var(--utopia-transition);
+}
+
+a:hover {
+    color: var(--utopia-accent-hover);
+    border-bottom-color: var(--utopia-accent);
+}
+
+code, pre, .mono {
+    font-family: var(--utopia-font-mono);
+    font-size: 0.86em;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--utopia-border);
+    margin: 1.5em 0;
+}
+
+/* -- Tables -------------------------------------------------------------
+   The jar pages use bare <table> for every listing, so this is the single
+   highest-leverage rule in the file. Replaces 1px solid black gridlines
+   with horizontal rules only.                                            */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.25em 0;
+    font-size: var(--utopia-text-base);
+}
+
+th {
+    text-align: left;
+    font-family: var(--utopia-font-sans);
+    font-size: var(--utopia-text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--utopia-tracking-label);
+    color: var(--utopia-ink-soft);
+    border: none;
+    border-bottom: 1px solid var(--utopia-border-strong);
+    padding: 8px 12px;
+    white-space: nowrap;
+}
+
+td {
+    border: none;
+    border-bottom: 1px solid var(--utopia-border);
+    padding: 10px 12px;
+    vertical-align: top;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr {
+    transition: background-color var(--utopia-transition);
+}
+
+tbody tr:hover {
+    background-color: var(--utopia-emphasis-soft);
+}
+
+/* -- Forms --------------------------------------------------------------- */
+
+label {
+    font-size: var(--utopia-text-sm);
+    color: var(--utopia-ink-soft);
+}
+
+input[type=text],
+input[type=password],
+input[type=number],
+input[type=date],
+input[type=email],
+select,
+textarea {
+    width: 240px;
+    max-width: 100%;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: var(--utopia-text-base);
+    color: var(--utopia-ink);
+    background-color: var(--utopia-surface-raised);
+    border: 1px solid var(--utopia-border-strong);
+    border-radius: var(--utopia-radius-control);
+    outline: none;
+    transition: border-color var(--utopia-transition), box-shadow var(--utopia-transition);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--utopia-accent);
+    box-shadow: var(--utopia-focus-ring);
+}
+
+input::placeholder {
+    color: var(--utopia-ink-faint);
+}
+
+input[type=checkbox],
+input[type=radio] {
+    width: auto;
+    accent-color: var(--utopia-accent);
+}
+
+select {
+    cursor: pointer;
+}
+
+/* -- Buttons -------------------------------------------------------------
+   Bare <button> and submit inputs are the primary action on these pages.  */
+
+button,
+input[type=submit] {
+    font-family: inherit;
+    font-size: var(--utopia-text-sm);
+    font-weight: 600;
+    width: auto;
+    padding: 9px 18px;
+    color: var(--utopia-surface);
+    background-color: var(--utopia-accent);
+    border: 1px solid transparent;
+    border-radius: var(--utopia-radius-control);
+    cursor: pointer;
+    transition: background-color var(--utopia-transition), border-color var(--utopia-transition);
+}
+
+button:hover,
+input[type=submit]:hover {
+    background-color: var(--utopia-accent-hover);
+}
+
+button:disabled,
+input[type=submit]:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+/* Neutral/secondary button — an outline that does not compete with the
+   primary action. Library markup does not use this class; the shadowing
+   stylesheets apply it to logout, cancel and delete affordances.        */
+.utopia-btn-quiet {
+    color: var(--utopia-ink-soft);
+    background-color: transparent;
+    border-color: var(--utopia-border-strong);
+}
+
+.utopia-btn-quiet:hover {
+    color: var(--utopia-ink);
+    background-color: transparent;
+    border-color: var(--utopia-ink);
+}
+
+.utopia-btn-danger {
+    color: var(--utopia-danger-strong);
+    background-color: transparent;
+    border-color: var(--utopia-danger);
+}
+
+.utopia-btn-danger:hover {
+    color: var(--utopia-surface);
+    background-color: var(--utopia-danger);
+}
+
+/* -- Small shared pieces -------------------------------------------------- */
+
+/* Uppercase eyebrow above a heading. */
+.utopia-eyebrow {
+    font-size: var(--utopia-text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--utopia-tracking-label);
+    color: var(--utopia-emphasis);
+    margin-bottom: 0.4em;
+}
+
+/* QR codes are rendered by both the issuer and the records pages. */
+.qr {
+    display: block;
+    margin-top: 1.25em;
+    width: 200px;
+    padding: 12px;
+    background: var(--utopia-surface-raised);
+    border: 1px solid var(--utopia-border);
+}

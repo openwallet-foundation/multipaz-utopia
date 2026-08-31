@@ -1,5 +1,6 @@
 {
   "server_port": 8004,
+  "custom_head_html": "<script src=\"utopia-chrome.js\"></script>",
   "root_identities": {
     "payment_processor": {
       "kty": "EC",

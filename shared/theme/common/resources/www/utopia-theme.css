@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;600;700&display=swap');
+
+:root {
+    /* -- Surfaces ---------------------------------------------------------
+       bg          page ground              (Organic --color-bg)
+       bg-sunken   wells and placeholders   (--color-neutral-200)
+       surface     cards and panels         (--color-surface)
+       raised      inputs, "on top"         (--color-neutral-100)
+       inverse     footers and dark bands   (--color-text)                 */
+    --utopia-bg:              #F5EAD8;
+    --utopia-bg-sunken:       #EEE7DB;
+    --utopia-surface:         #EBDDC5;
+    --utopia-surface-raised:  #F9F4ED;
+    --utopia-bg-inverse:      #201E1D;
+    --utopia-ink-inverse:     #F5EAD8;
+    --utopia-ink-inverse-soft:#C0B6A5;
+    --utopia-scrim:           rgba(32, 30, 29, 0.50);
+
+    /* -- Text ------------------------------------------------------------- */
+    --utopia-ink:             #201E1D;
+    --utopia-ink-hover:       #2E2B25;   /* --color-neutral-900 */
+    --utopia-ink-soft:        #645C50;   /* --color-neutral-700 */
+    --utopia-ink-faint:       #A19786;   /* --color-neutral-500 */
+
+    /* -- Lines ------------------------------------------------------------
+       Organic's --color-divider is the ink at 16%.                         */
+    --utopia-border:          rgba(32, 30, 29, 0.16);
+    --utopia-border-strong:   #C0B6A5;   /* --color-neutral-400 */
+
+    /* -- Accents ----------------------------------------------------------
+       accent    terracotta, the primary action colour
+       accent-2  sage, a genuine second voice rather than a highlight
+       emphasis  prices, eyebrows and editorial runs (--color-accent-700)   */
+    --utopia-accent:          #C67139;
+    --utopia-accent-hover:    #B2622D;   /* --color-accent-600 */
+    --utopia-accent-soft:     rgba(198, 113, 57, 0.14);
+    --utopia-accent-soft-hi:  rgba(198, 113, 57, 0.26);
+
+    --utopia-accent-2:        #7A8A5E;
+    --utopia-accent-2-soft:   rgba(122, 138, 94, 0.18);
+
+    /* -- Category tints ----------------------------------------------------
+       The rotating grounds behind marketplace product glyphs. Organic takes
+       them straight from the 200/300 steps of its three ramps, which is what
+       the artboards use.                                                    */
+    --utopia-tint-1:          #FFE1D0;   /* --color-accent-200   */
+    --utopia-tint-2:          #E1EECC;   /* --color-accent-2-200 */
+    --utopia-tint-3:          #EEE7DB;   /* --color-neutral-200  */
+    --utopia-tint-4:          #FFC6A5;   /* --color-accent-300   */
+    --utopia-tint-5:          #CCDBB2;   /* --color-accent-2-300 */
+    --utopia-tint-6:          #DCD3C4;   /* --color-neutral-300  */
+
+    --utopia-emphasis:        #8C491A;   /* --color-accent-700 */
+    --utopia-emphasis-light:  #F6A06B;   /* --color-accent-400, for the dark band */
+    --utopia-emphasis-soft:   rgba(198, 113, 57, 0.14);
+    /* Emphasis as a FILL, plus the ink that sits on it. --utopia-emphasis
+       (accent-700) is a text tone and is far too dark to be a fill. */
+    --utopia-emphasis-fill:   #F6A06B;   /* --color-accent-400 */
+    --utopia-on-emphasis:     #402310;   /* --color-accent-900 */
+
+    /* -- Status -----------------------------------------------------------
+       Sage carries success, as it does on the issued-credential and paid
+       cards in the artboards.                                              */
+    --utopia-success:         #7A8A5E;
+    --utopia-success-ink:     #3D472B;   /* --color-accent-2-800 */
+    --utopia-danger:          #9E2B2B;
+    --utopia-danger-strong:   #762020;
+    --utopia-danger-soft:     rgba(158, 43, 43, 0.14);
+    --utopia-danger-faint:    rgba(158, 43, 43, 0.07);
+    --utopia-danger-line:     rgba(158, 43, 43, 0.28);
+
+    /* -- Type -------------------------------------------------------------
+       Caprasimo is a heavy display face — headings only, never body copy.
+       Both faces come from the Google Fonts import above; the fallbacks
+       carry the page if that request cannot be made.                       */
+    --utopia-font-sans:       "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --utopia-font-display:    "Caprasimo", Georgia, "Times New Roman", serif;
+    --utopia-font-mono:       Menlo, Consolas, ui-monospace, monospace;
+
+    /* Organic's density is 1.10x, so the scale sits a step above Archive. */
+    --utopia-text-xs:         0.75rem;
+    --utopia-text-sm:         0.85rem;
+    --utopia-text-base:       1rem;
+    --utopia-text-lg:         1.2rem;
+    --utopia-text-xl:         1.6rem;
+
+    --utopia-tracking-label:  0.10em;
+
+    /* -- Shape ------------------------------------------------------------
+       "Over-round: --radius-lg for containers, 999px for buttons and
+       inputs." radius-control is the lever that makes every control a pill. */
+    --utopia-radius:          28px;
+    --utopia-radius-sm:       16px;
+    --utopia-radius-xs:       8px;
+    --utopia-radius-pill:     999px;
+    --utopia-radius-control:  999px;
+
+    /* -- Elevation --------------------------------------------------------- */
+    --utopia-shadow-sm:       0 1px 2px rgba(46, 43, 37, 0.14);
+    --utopia-shadow-md:       0 3px 10px rgba(46, 43, 37, 0.16);
+    --utopia-shadow-lg:       0 12px 32px rgba(46, 43, 37, 0.22);
+
+    /* -- Layout ------------------------------------------------------------ */
+    --utopia-measure:         720px;
+    --utopia-page-max:        1180px;
+
+    /* -- Focus ------------------------------------------------------------- */
+    --utopia-focus-ring:        0 0 0 3px var(--utopia-accent-soft);
+    --utopia-focus-ring-danger: 0 0 0 3px var(--utopia-danger-soft);
+
+    /* -- Motion ------------------------------------------------------------ */
+    --utopia-transition:      0.15s ease;
+}

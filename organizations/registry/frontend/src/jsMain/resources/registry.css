@@ -1,8 +1,61 @@
+/* ==========================================================================
+   Utopia Registry — React front-end styles
+
+   Driven by the shared Utopia design tokens. Unlike the other stylesheets in
+   the universe this one is served by nginx from /app/web, not off the JVM
+   classpath — utopia-theme.css is staged into the browser distribution by the
+   `stageUtopiaTheme` task in this module's build.gradle.kts.
+
+   ========================================================================== */
+
+@import "utopia-theme.css";
+
+/* Schema field icons are Material Symbols ligatures (see ItemEditor.kt). */
 @import "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined";
 
+/* Applied to <body> by registry.html / person.html. The body is full-bleed so
+   the shared chrome (utopia-chrome.js) spans the viewport; #main is the column,
+   matching utopia-base.css on the library-served pages. */
 .records-root {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: var(--utopia-font-sans);
     font-size: 0.875em;
+    background-color: var(--utopia-bg);
+    color: var(--utopia-ink);
+    margin: 0;
+    padding: 0;
+}
+
+.records-root #main {
+    max-width: var(--utopia-page-max);
+    margin: 0 auto;
+    padding: 48px 28px 40px;
+}
+
+@media (max-width: 640px) {
+    .records-root #main { padding: 28px 18px 32px; }
+}
+
+.records-root h1 {
+    font-family: var(--utopia-font-display);
+    font-weight: 600;
+    margin: 0 0 0.1em;
+}
+
+.records-root h2 {
+    font-family: var(--utopia-font-display);
+    font-weight: 400;
+    color: var(--utopia-ink-soft);
+    margin: 0 0 0.75em;
+}
+
+.records-root a {
+    color: var(--utopia-accent);
+    text-decoration: none;
+}
+
+.records-root a:hover {
+    color: var(--utopia-accent-hover);
+    text-decoration: underline;
 }
 
 .records-root p {
@@ -10,20 +63,62 @@
 }
 
 .records-editor {
-    color: #1a1a1a;
+    color: var(--utopia-ink);
 }
 
 /* -- List of records ---------------------------------------- */
 
 .records-table {
-    border-collapse: collapse;
-    margin: 1em;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 1.5em 0;
+    width: 100%;
     font-size: inherit;
+    background: var(--utopia-surface-raised);
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius);
+    overflow: hidden;
 }
 
-.records-table td, .records-table th {
-    border: 1px solid black;
-    padding: 8px;
+.records-table-header th {
+    background: var(--utopia-surface);
+    text-align: left;
+    font-size: 0.78em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--utopia-tracking-label);
+    color: var(--utopia-ink-soft);
+    border: none;
+    border-bottom: 1px solid var(--utopia-border);
+    padding: 14px 24px;
+    white-space: nowrap;
+}
+
+.records-table td {
+    border: none;
+    border-bottom: 1px solid var(--utopia-border);
+    padding: 16px 24px;
+}
+
+.records-table-row {
+    transition: background-color var(--utopia-transition);
+}
+
+.records-table-row:hover {
+    background-color: var(--utopia-accent-soft);
+}
+
+.records-table-row:last-child td {
+    border-bottom: none;
+}
+
+.records-table-row a {
+    font-family: var(--utopia-font-mono);
+    font-weight: 600;
+    color: var(--utopia-emphasis);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-variant-numeric: tabular-nums;
 }
 
 
@@ -40,7 +135,7 @@
     min-width: 140px;
     font-size: 1em;
     font-weight: 500;
-    color: #444;
+    color: var(--utopia-ink-soft);
     flex-shrink: 0;
 }
 
@@ -61,18 +156,18 @@
     padding: 5px 8px;
     font-size: 1em;
     font-family: inherit;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #fff;
-    color: #1a1a1a;
+    border: 1px solid var(--utopia-border-strong);
+    border-radius: var(--utopia-radius-control);
+    background: var(--utopia-surface-raised);
+    color: var(--utopia-ink);
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color var(--utopia-transition);
 }
 
 .records-input:focus,
 .records-select:focus,
 .records-date-input:focus {
-    border-color: #4a90d9;
+    border-color: var(--utopia-accent);
 }
 
 .records-input--number {
@@ -88,13 +183,13 @@
 .records-checkbox {
     width: 16px;
     height: 16px;
-    accent-color: #4a90d9;
+    accent-color: var(--utopia-accent);
     cursor: pointer;
 }
 
 .records-checkbox-label {
     font-size: 1em;
-    color: #666;
+    color: var(--utopia-ink-soft);
     user-select: none;
 }
 
@@ -115,7 +210,7 @@
 
 .records-file-name {
     font-size: 0.875em;
-    color: #666;
+    color: var(--utopia-ink-soft);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -126,15 +221,15 @@
     font-family: inherit;
     padding: 2px 8px;
     background: none;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    color: #888;
+    border: 1px solid var(--utopia-border-strong);
+    border-radius: var(--utopia-radius-control);
+    color: var(--utopia-ink-faint);
     cursor: pointer;
 }
 
 .records-file-clear:hover {
-    border-color: #999;
-    color: #444;
+    border-color: var(--utopia-ink-soft);
+    color: var(--utopia-ink);
 }
 
 /* -- Picture preview --------------------------------------------- */
@@ -142,8 +237,8 @@
 .records-picture-preview {
     max-width: 120px;
     max-height: 80px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+    border-radius: var(--utopia-radius-xs);
+    border: 1px solid var(--utopia-border);
     object-fit: cover;
 }
 
@@ -161,7 +256,7 @@
 
 .records-compound--nested {
     margin-left: 16px;
-    border-left: 2px solid #e0e0e0;
+    border-left: 2px solid var(--utopia-border);
     padding-left: 14px;
 }
 
@@ -175,14 +270,14 @@
 }
 
 .records-compound-header:hover {
-    color: #4a90d9;
+    color: var(--utopia-accent);
 }
 
 .records-chevron {
     display: inline-block;
     font-size: 0.75em;
-    color: #999;
-    transition: transform 0.15s;
+    color: var(--utopia-ink-faint);
+    transition: transform var(--utopia-transition);
     width: 14px;
     text-align: center;
 }
@@ -226,16 +321,16 @@
 .records-list-title {
     font-size: 1em;
     font-weight: 600;
-    color: #444;
+    color: var(--utopia-ink-soft);
 }
 
 .records-list-count {
     font-size: 0.75em;
     font-weight: 500;
     padding: 1px 6px;
-    background: #eef3fb;
-    color: #4a90d9;
-    border-radius: 4px;
+    background: var(--utopia-accent-soft);
+    color: var(--utopia-accent);
+    border-radius: var(--utopia-radius-control);
 }
 
 .records-list-add {
@@ -243,20 +338,20 @@
     font-family: inherit;
     font-weight: 500;
     padding: 3px 10px;
-    background: #eef3fb;
-    color: #4a90d9;
-    border: 1px solid #c5d8f0;
-    border-radius: 4px;
+    background: var(--utopia-accent-soft);
+    color: var(--utopia-accent);
+    border: 1px solid var(--utopia-accent-soft-hi);
+    border-radius: var(--utopia-radius-control);
     cursor: pointer;
 }
 
 .records-list-add:hover {
-    background: #dce8f8;
+    background: var(--utopia-accent-soft-hi);
 }
 
 .records-list-items {
     margin-left: 16px;
-    border-left: 2px solid #e0e0e0;
+    border-left: 2px solid var(--utopia-border);
     padding-left: 14px;
 }
 
@@ -275,7 +370,7 @@
 .records-list-item-index {
     font-size: 0.875em;
     font-weight: 600;
-    color: #999;
+    color: var(--utopia-ink-faint);
 }
 
 .records-list-item-remove {
@@ -284,16 +379,16 @@
     font-weight: 500;
     padding: 2px 8px;
     background: none;
-    color: #c44;
-    border: 1px solid #e0c0c0;
-    border-radius: 3px;
+    color: var(--utopia-danger);
+    border: 1px solid var(--utopia-danger-line);
+    border-radius: var(--utopia-radius-control);
     cursor: pointer;
     opacity: 0.7;
 }
 
 .records-list-item-remove:hover {
     opacity: 1;
-    background: #fdf0f0;
+    background: var(--utopia-danger-soft);
 }
 
 /* -- List of primitives: compact inline style -------------------- */
@@ -313,16 +408,16 @@
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    background: #f0f3f7;
-    color: #333;
-    border-radius: 4px;
+    background: var(--utopia-bg-sunken);
+    color: var(--utopia-ink);
+    border-radius: var(--utopia-radius-control);
     font-size: 0.875em;
 }
 
 .records-tag-remove {
     background: none;
     border: none;
-    color: #999;
+    color: var(--utopia-ink-faint);
     cursor: pointer;
     font-size: 0.875em;
     padding: 0 2px;
@@ -331,56 +426,162 @@
 }
 
 .records-tag-remove:hover {
-    color: #c44;
+    color: var(--utopia-danger);
 }
 
 .records-tag-input {
     padding: 2px 8px;
     font-size: 1em;
     font-family: inherit;
-    border: 1px solid #4a90d9;
-    border-radius: 4px;
+    border: 1px solid var(--utopia-accent);
+    border-radius: var(--utopia-radius-control);
     outline: none;
     width: 120px;
-    background: #fff;
-    color: #1a1a1a;
+    background: var(--utopia-surface-raised);
+    color: var(--utopia-ink);
 }
 
 .records-person-buttons {
-    margin-top: 1em;
-    margin-left: 1em;
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5em;
+    padding-top: 1.25em;
+    border-top: 1px solid var(--utopia-border);
 }
 
 .records-person-save {
-    font-size: 0.875em;
+    font-size: 1em;
     font-family: inherit;
-    font-weight: 500;
-    padding: 3px 10px;
-    background: #eef3fb;
-    color: #4a90d9;
-    border: 1px solid #c5d8f0;
-    border-radius: 4px;
+    font-weight: 600;
+    padding: 9px 22px;
+    background: var(--utopia-accent);
+    color: var(--utopia-surface);
+    border: 1px solid transparent;
+    border-radius: var(--utopia-radius-control);
     cursor: pointer;
+    transition: background-color var(--utopia-transition);
 }
 
 .records-person-save:hover {
-    background: #dce8f8;
+    background: var(--utopia-accent-hover);
 }
 
 .records-person-delete {
-    font-size: 0.875em;
+    font-size: 1em;
     font-family: inherit;
-    font-weight: 500;
-    padding: 2px 8px;
+    font-weight: 600;
+    padding: 9px 18px;
     background: none;
-    color: #c44;
-    border: 1px solid #e0c0c0;
-    border-radius: 3px;
+    color: var(--utopia-danger-strong);
+    border: 1px solid var(--utopia-danger);
+    border-radius: var(--utopia-radius-control);
     cursor: pointer;
-    opacity: 0.7;
+    transition: background-color var(--utopia-transition), color var(--utopia-transition);
 }
 
 .records-person-delete:hover {
-    opacity: 1;
-    background: #fdf0f0;
+    background: var(--utopia-danger);
+    color: var(--utopia-surface);
+}
+
+/* -- Login control (Login.kt) --------------------------------------- */
+
+.records-login {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.records-login-label {
+    font-size: 0.95em;
+    color: var(--utopia-ink-soft);
+}
+
+.records-login-password {
+    width: 180px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: 1em;
+    color: var(--utopia-ink);
+    background: var(--utopia-surface-raised);
+    border: 1px solid var(--utopia-border-strong);
+    border-radius: var(--utopia-radius-control);
+    outline: none;
+    transition: border-color var(--utopia-transition), box-shadow var(--utopia-transition);
+}
+
+.records-login-password:focus {
+    border-color: var(--utopia-accent);
+    box-shadow: var(--utopia-focus-ring);
+}
+
+.records-login button {
+    font-family: inherit;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 6px 16px;
+    color: var(--utopia-ink-soft);
+    background: transparent;
+    border: 1px solid var(--utopia-border-strong);
+    border-radius: var(--utopia-radius-control);
+    cursor: pointer;
+    transition: border-color var(--utopia-transition), color var(--utopia-transition);
+}
+
+.records-login button:hover {
+    color: var(--utopia-ink);
+    border-color: var(--utopia-ink);
+}
+
+.records-login-error {
+    color: var(--utopia-danger-strong);
+    font-size: 0.9em;
+}
+
+/* -- Record cards (PersonApp.kt) ---------------------------------------
+   `.records-editor` wraps core and each record instance; the legacy pages
+   present the equivalent blocks as cards, so these match.               */
+
+.records-editor {
+    margin: 0 0 1em;
+    padding: 16px 20px;
+    background: var(--utopia-surface-raised);
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius);
+    box-shadow: var(--utopia-shadow-md);
+    color: var(--utopia-ink);
+}
+
+.records-record-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-family: var(--utopia-font-display);
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--utopia-ink);
+}
+
+/* -- Page-level primary action (RecordsApp.kt) -------------------------
+   RecordsApp reuses `.records-list-add` for "Add an individual", which is
+   a page-level action rather than the inline chip that class is styled
+   for. It is the mount element's direct child, the inline ones are not. */
+
+.multipaz-records-list > .records-list-add {
+    font-size: 1em;
+    font-weight: 600;
+    padding: 9px 22px;
+    margin: 0.5em 0 0.5em;
+    background: var(--utopia-accent);
+    color: var(--utopia-surface);
+    border: 1px solid transparent;
+    border-radius: var(--utopia-radius-control);
+}
+
+.multipaz-records-list > .records-list-add:hover {
+    background: var(--utopia-accent-hover);
 }

@@ -1,0 +1,177 @@
+/* ==========================================================================
+   Utopia shared chrome — the header and footer every service wears
+   --------------------------------------------------------------------------
+   Injected by utopia-chrome.js. A sticky, blurred header
+   carrying the brand mark, the demo pill, cross-service nav and the wallet
+   button; a single hairline-topped footer line.
+
+   Everything here is palette-driven, so the chrome re-skins with the rest of
+   the universe when utopia-theme.css points at a different palette.
+   ========================================================================== */
+
+.utopia-chrome {
+    position: sticky;
+    top: 0;
+    z-index: 400;
+    background: var(--utopia-bg);
+    border-bottom: 1px solid var(--utopia-border);
+    font-family: var(--utopia-font-sans);
+}
+
+/* The mockup's header is translucent + blurred. Only apply that where the
+   browser can actually blur, so we never fall back to see-through chrome. */
+@supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
+    .utopia-chrome {
+        background: color-mix(in srgb, var(--utopia-bg) 92%, transparent);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+    }
+}
+
+.utopia-chrome-inner {
+    max-width: var(--utopia-page-max);
+    margin: 0 auto;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* -- Brand ---------------------------------------------------------------- */
+
+.utopia-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px;
+    border: 0;
+    background: transparent;
+    color: var(--utopia-ink);
+    text-decoration: none;
+    cursor: pointer;
+    flex: none;
+}
+
+.utopia-brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--utopia-accent);
+    color: var(--utopia-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--utopia-font-display);
+    font-size: 16px;
+    line-height: 1;
+}
+
+.utopia-brand-name {
+    font-family: var(--utopia-font-display);
+    font-size: 19px;
+    white-space: nowrap;
+}
+
+.utopia-demo-pill {
+    white-space: nowrap;
+    flex: none;
+    border-radius: var(--utopia-radius-pill);
+    border: 1px solid var(--utopia-border);
+    color: var(--utopia-ink-soft);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+}
+
+/* -- Nav ------------------------------------------------------------------ */
+
+.utopia-nav {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.utopia-nav::-webkit-scrollbar { display: none; }
+
+.utopia-nav a,
+.utopia-wallet {
+    white-space: nowrap;
+    flex: none;
+    cursor: pointer;
+    border: 0;
+    background: transparent;
+    font-family: var(--utopia-font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--utopia-ink);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: var(--utopia-radius-pill);
+    transition: background-color var(--utopia-transition), color var(--utopia-transition);
+}
+
+.utopia-nav a:hover,
+.utopia-wallet:hover {
+    background: color-mix(in srgb, var(--utopia-ink) 8%, transparent);
+}
+
+.utopia-nav a[aria-current="page"] {
+    background: var(--utopia-accent);
+    color: var(--utopia-bg);
+}
+
+.utopia-wallet {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    border: 1px solid var(--utopia-border);
+}
+
+.utopia-wallet-count {
+    min-width: 20px;
+    height: 20px;
+    border-radius: var(--utopia-radius-pill);
+    background: var(--utopia-accent-2);
+    color: var(--utopia-bg);
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+}
+
+/* -- Footer --------------------------------------------------------------- */
+
+.utopia-footer {
+    max-width: var(--utopia-page-max);
+    margin: 56px auto 0;
+    padding: 40px 28px;
+    border-top: 1px solid var(--utopia-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-family: var(--utopia-font-sans);
+    font-size: 12px;
+    color: color-mix(in srgb, var(--utopia-ink) 55%, transparent);
+}
+
+.utopia-footer a {
+    color: var(--utopia-accent);
+    text-decoration: none;
+    border: 0;
+}
+
+.utopia-footer a:hover { text-decoration: underline; }
+
+@media (max-width: 860px) {
+    .utopia-chrome-inner { padding: 10px 16px; gap: 10px; }
+    .utopia-demo-pill { display: none; }
+    .utopia-footer { margin-top: 32px; padding: 28px 16px; }
+}

@@ -6,48 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Utopia Marketplace</title>
     <link rel="stylesheet" href="marketplace.css">
+    <script>window.UTOPIA_SERVICE = "marketplace";</script>
+    <script src="utopia-chrome.js"></script>
 </head>
 <body>
-<header class="site-header">
-    <div class="header-inner">
-        <span class="site-logo">Utopia Marketplace</span>
-    </div>
-</header>
-
-<main class="archive-main">
-    <div class="archive-intro">
-        <p class="release-label">WELCOME TO UTOPIA</p>
-        <h1>Everyday groceries,<br>checkout you can trust.</h1>
-        <p class="archive-sub">From fresh produce to the pantry staples you rely on — pay securely with a
-            digital payment credential. Age-restricted items ask for a digital ID, verified in seconds
-            right at checkout.</p>
-    </div>
+<!-- The header and footer come from utopia-chrome.js, shared with every other
+     Utopia service. This page supplies only its own content column. -->
+<main class="mk-page">
+    <p class="mk-eyebrow">Welcome to Utopia</p>
+    <h1 class="mk-hero">Everyday groceries, checkout you can trust.</h1>
+    <p class="mk-lead">From fresh produce to the pantry staples you rely on — pay with a digital
+        payment credential. Age-restricted items ask for a digital ID, verified in seconds at
+        checkout.</p>
 
     <!-- Aisles are rendered from catalog.js -->
     <div id="aisles"></div>
 
-    <div class="tasting-banner">
-        <div class="tasting-text">
+    <div class="mk-banner">
+        <div class="mk-banner-text">
             <h3>Buying something age-restricted?</h3>
-            <p>Present a digital ID (mDL, EU PID, Aadhaar) once at checkout. We confirm you're 18+
-                without ever seeing your date of birth — no cashier, no paperwork.</p>
+            <p>Present a digital ID once at checkout. We confirm you're over 18 without ever seeing
+                your date of birth — no cashier, no paperwork, no photocopy of your licence in a
+                drawer somewhere.</p>
         </div>
-        <a href="#aisles" class="btn-tasting">Start Shopping</a>
+        <a href="#aisle-spirits" class="mk-banner-btn">Start shopping</a>
     </div>
-</main>
 
-<footer class="site-footer">
-    <div class="footer-col">
-        <p class="footer-logo">Utopia Marketplace</p>
-        <p class="footer-tag">Fresh groceries and everyday essentials, with fast and private
-            credential-based checkout.</p>
-        <p class="footer-copy">&copy; 2026 UTOPIA MARKETPLACE. SHOP WITH CONFIDENCE.</p>
-    </div>
-</footer>
+    <p class="mk-finePrint">Utopia Marketplace is a fictional shop. No products exist, nothing
+        ships, and no payment is taken.</p>
+</main>
 
 <script src="catalog.js"></script>
 <script>
-    // Render each aisle as a titled section with a product grid.
+    // One section per aisle: a titled rule, then a grid of product tiles.
     (function () {
         const root = document.getElementById("aisles");
         AISLES.forEach(function (aisle) {
@@ -55,32 +46,33 @@
             if (!items.length) return;
 
             const section = document.createElement("section");
-            section.className = "aisle";
+            section.className = "mk-aisle";
+            section.id = "aisle-" + aisle.id;
 
             const head = document.createElement("div");
-            head.className = "aisle-head";
+            head.className = "mk-aisle-head";
             head.innerHTML =
-                '<h2 class="aisle-title">' + escapeHtml(aisle.name) + "</h2>" +
-                '<p class="aisle-blurb">' + escapeHtml(aisle.blurb) + "</p>";
+                "<h3>" + escapeHtml(aisle.name) + "</h3>" +
+                '<span class="mk-aisle-note">' + escapeHtml(aisle.blurb) + "</span>";
             section.appendChild(head);
 
             const grid = document.createElement("div");
-            grid.className = "product-grid";
+            grid.className = "mk-grid";
             items.forEach(function (p) {
                 const card = document.createElement("a");
-                card.className = "product-card";
+                card.className = "mk-tile";
                 card.href = "product.html?id=" + p.id;
                 card.innerHTML =
-                    '<div class="card-image-wrap">' +
-                        '<img src="' + p.image + '" alt="' + escapeHtml(p.name) + '">' +
-                        (p.ageRestricted ? '<span class="badge badge-age">18+</span>' : "") +
-                    "</div>" +
-                    '<div class="card-info">' +
-                        "<h2>" + escapeHtml(p.name) + "</h2>" +
-                        '<p class="card-sub">' + escapeHtml(p.tagline) + "</p>" +
-                        '<span class="card-price">$' + escapeHtml(p.price) + "</span> " +
-                        '<span class="card-unit">' + escapeHtml(p.unit) + "</span>" +
-                    "</div>";
+                    '<span class="mk-art washed" style="background:' + p.tint + '">' +
+                        '<span class="mk-glyph">' + p.glyph + "</span>" +
+                        (p.ageRestricted ? '<span class="mk-age">18+</span>' : "") +
+                    "</span>" +
+                    '<span class="mk-name">' + escapeHtml(p.name) + "</span>" +
+                    '<span class="mk-kicker">' + escapeHtml(p.tagline) + "</span>" +
+                    '<span class="mk-priceRow">' +
+                        '<span class="mk-price">$' + escapeHtml(p.price) + "</span> " +
+                        '<span class="mk-unit">' + escapeHtml(p.unit) + "</span>" +
+                    "</span>";
                 grid.appendChild(card);
             });
             section.appendChild(grid);

@@ -118,14 +118,13 @@ All services are available through the nginx proxy on port 8100:
 | Web Frontend     | http://localhost:8100/                | —            |
 | Registry         | http://localhost:8100/registry/       | 8004         |
 | Utopia DMV       | http://localhost:8100/dmv/            | 8002         |
-| Bank of Utopia   | http://localhost:8100/bank_of_utopia/ | 8001         |
+| Bank of Utopia   | http://localhost:8100/bank_of_utopia/ | 8017         |
 | UPay service     | http://localhost:8100/upay/           | 8009         |
 | Marketplace      | http://localhost:8100/marketplace/    | 8010         |
 | Marketplace MCP  | http://localhost:8100/mcp             | 8011         |
 
 The service ports are what nginx proxies to inside the container, and what `MODE=direct` exposes
-instead of the proxy. They are not always the port a server uses when run on its own from Gradle —
-Bank of Utopia, for instance, defaults to 8017 outside the bundle.
+instead of the proxy. They are the same ports each server uses when run on its own from Gradle.
 
 ## Deploying to a Server
 

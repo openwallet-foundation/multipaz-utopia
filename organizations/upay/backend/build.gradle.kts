@@ -46,3 +46,8 @@ dependencies {
 
 ktor {
 }
+
+// to inject the utopia stylesheets and chrome script (see shared/theme/README)
+tasks.named<ProcessResources>("processResources") {
+    from(rootProject.file("shared/theme/common"))
+}

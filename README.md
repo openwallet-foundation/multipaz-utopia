@@ -10,13 +10,10 @@ whole world can be run at once.
 |---------------------|-----------------------------------------------------------------------------|-----------------------------------------|------------|---------------------------|
 | **Registry**        | System of Record (identities, accounts, enrollment/IACA, payment processor) | `:organizations:registry:backend`       | 8004       | `/registry/`              |
 | **Utopia DMV**      | mDL issuer (OpenID4VCI)                                                     | `:organizations:dmv:backend`            | 8002       | `/dmv/`                   |
-| **Bank of Utopia**  | Payment card issuer (OpenID4VCI)                                            | `:organizations:bank_of_utopia:backend` | 8017       | `/bank_of_utopia/` (8001) |
+| **Bank of Utopia**  | Payment card issuer (OpenID4VCI)                                            | `:organizations:bank_of_utopia:backend` | 8017       | `/bank_of_utopia/`        |
 | **UPay**            | Payment card verifier — transfers money between accounts                    | `:organizations:upay:backend`           | 8009       | `/upay/`                  |
 | **Marketplace**     | Grocery storefront — payment + age-restricted checkout                      | `:organizations:marketplace:backend`    | 8010       | `/marketplace/`           |
 | **Marketplace MCP** | Agentic storefront (Node/TS) over the marketplace                           | `:organizations:marketplace:mcp`        | 3005       | `/mcp` (8011)             |
-
-Bank of Utopia is the one port that differs between the two ways of running: its own default
-configuration says 8017, and the container bundle starts it on 8001.
 
 ## Prerequisites
 
@@ -238,6 +235,7 @@ organizations/<org>/backend    # Ktor/Netty server
 organizations/<org>/frontend   # Storefront or console assets, served off the backend classpath
 organizations/marketplace/mcp  # Node/TypeScript MCP storefront, npm build driven from Gradle
 shared/issuer                  # Issuer logic shared by DMV and Bank of Utopia
+shared/theme                   # Design tokens, palettes, and the two shadowing stylesheets
 deployment/                    # Container image: nginx, per-service config, startup script
 ```
 
@@ -248,6 +246,7 @@ deployment/                    # Container image: nginx, per-service config, sta
 | [organizations/marketplace/README.md](organizations/marketplace/README.md)             | Marketplace checkout, age verification, payment transaction                             |
 | [organizations/marketplace/mcp/README.md](organizations/marketplace/mcp/README.md)     | Agentic MCP storefront                                                                  |
 | [organizations/registry/frontend/README.md](organizations/registry/frontend/README.md) | Registry front-end development                                                          |
+| [shared/theme/README.md](shared/theme/README.md)                                       | Palettes, design tokens, and how one theme reaches every service                        |
 | [deployment/README.md](deployment/README.md)                                           | Building, running, and deploying the container bundle                                   |
 | [deployment/docker/init/UPDATING.md](deployment/docker/init/UPDATING.md)               | Updating Registry seed data                                                             |
 | [CODING-STYLE.md](CODING-STYLE.md)                                                     | Coding style                                                                            |

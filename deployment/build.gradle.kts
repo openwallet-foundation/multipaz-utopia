@@ -197,6 +197,7 @@ tasks.register<Exec>("runDockerImage") {
         containerTool, "run",
         "--rm",
         "-p", "8000-8010:8000-8010",
+        "-p", "8017:8017",
         "multipaz-utopia/server-bundle:latest"
     )
 }

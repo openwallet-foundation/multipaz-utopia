@@ -3,17 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Utopia!</title>
+    <title>Welcome to Utopia</title>
+
+    <!-- The design tokens and the shared chrome arrive in /app/web with the
+         Registry front-end bundle (Dockerfile copies build/dist/js/
+         productionExecutable over this directory), so they are siblings of
+         this file at runtime. Layout below is inlined because this is the one
+         page nginx serves that has no service behind it. -->
+    <link rel="stylesheet" href="utopia-theme.css">
+    <script src="utopia-chrome.js"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--utopia-bg);
+            color: var(--utopia-ink);
+            font-family: var(--utopia-font-sans);
+            font-size: 15px;
+            line-height: 1.55;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--utopia-font-display);
+            font-weight: 600;
+            line-height: 1.12;
+            letter-spacing: -0.015em;
+            margin: 0 0 0.4em;
+        }
+
+        .ut-page {
+            max-width: var(--utopia-page-max);
+            margin: 0 auto;
+            padding: 60px 28px 40px;
+        }
+
+        .ut-hero {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 56px;
+            align-items: center;
+        }
+
+        .ut-eyebrow {
+            font-size: 12px;
+            letter-spacing: var(--utopia-tracking-label);
+            text-transform: uppercase;
+            color: var(--utopia-emphasis);
+            margin: 0 0 16px;
+        }
+
+        .ut-title { font-size: clamp(2.4rem, 5.5vw, 64px); line-height: 1.02; margin: 0 0 20px; }
+
+        .ut-lead {
+            font-size: 19px;
+            max-width: 31em;
+            margin: 0;
+            color: color-mix(in srgb, var(--utopia-ink) 72%, transparent);
+        }
+
+        .ut-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+
+        .ut-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--utopia-font-display);
+            font-size: 15px;
+            padding: 12px 24px;
+            border-radius: var(--utopia-radius-pill);
+            border: 1px solid transparent;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color var(--utopia-transition), border-color var(--utopia-transition);
+        }
+
+        .ut-btn--primary { background: var(--utopia-accent); color: var(--utopia-bg); }
+        .ut-btn--primary:hover { background: var(--utopia-accent-hover); }
+        .ut-btn--secondary { border-color: var(--utopia-border); color: var(--utopia-ink); }
+        .ut-btn--secondary:hover { background: color-mix(in srgb, var(--utopia-ink) 7%, transparent); }
+
+        .ut-disclaimer {
+            margin-top: 26px;
+            font-size: 13px;
+            max-width: 34em;
+            color: color-mix(in srgb, var(--utopia-ink) 55%, transparent);
+        }
+
+        /* Hero art: two soft circles with a credential floating over them. */
+        .ut-art { position: relative; height: 380px; }
+        .ut-art-disc { position: absolute; inset: 0; border-radius: 50%; background: var(--utopia-tint-2); }
+        .ut-art-disc--inner {
+            inset: auto;
+            left: 14%; top: 12%; width: 72%; height: 76%;
+            background: var(--utopia-tint-1);
+        }
+
+        .ut-card {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            padding: 20px;
+            border-radius: var(--utopia-radius);
+            background: var(--utopia-surface-raised);
+            box-shadow: var(--utopia-shadow-lg);
+        }
+
+        .ut-card-kicker {
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--utopia-emphasis);
+        }
+
+        .ut-card-portrait {
+            height: 72px;
+            margin: 12px 0;
+            border-radius: var(--utopia-radius-sm);
+            background: var(--utopia-tint-6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: var(--utopia-ink-soft);
+        }
+
+        .ut-card-name { font-family: var(--utopia-font-display); font-size: 17px; }
+        .ut-card-doctype { font-family: var(--utopia-font-mono); font-size: 11px; color: var(--utopia-ink-soft); }
+
+        /* Offices */
+        .ut-offices { padding-top: 16px; }
+        .ut-offices h2 { font-size: 32px; margin-bottom: 6px; }
+        .ut-offices-note { margin: 0 0 26px; color: color-mix(in srgb, var(--utopia-ink) 55%, transparent); }
+
+        .ut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+        .ut-tile {
+            display: block;
+            background: var(--utopia-surface);
+            border: 1px solid var(--utopia-border);
+            border-radius: var(--utopia-radius);
+            padding: 26px;
+            color: var(--utopia-ink);
+            text-decoration: none;
+            transition: transform var(--utopia-transition), box-shadow var(--utopia-transition);
+        }
+
+        .ut-tile:hover { transform: translateY(-3px); box-shadow: var(--utopia-shadow-lg); }
+
+        .ut-tile-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--utopia-tint-1);
+            color: var(--utopia-emphasis);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--utopia-font-display);
+            font-size: 17px;
+            margin-bottom: 16px;
+        }
+
+        .ut-tile-title { font-family: var(--utopia-font-display); font-size: 21px; margin-bottom: 6px; }
+
+        .ut-tile-body {
+            font-size: 14px;
+            color: color-mix(in srgb, var(--utopia-ink) 68%, transparent);
+            text-wrap: pretty;
+        }
+
+        .ut-tile-proto {
+            margin-top: 16px;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--utopia-emphasis);
+        }
+
+        .ut-alt {
+            margin-top: 26px;
+            font-size: 13px;
+            color: color-mix(in srgb, var(--utopia-ink) 55%, transparent);
+        }
+
+        .ut-alt a { color: var(--utopia-accent); }
+
+        @media (max-width: 900px) {
+            .ut-hero { grid-template-columns: 1fr; gap: 32px; }
+            .ut-art { height: 300px; }
+            .ut-grid { grid-template-columns: repeat(2, 1fr); }
+            .ut-page { padding: 36px 18px; }
+        }
+
+        @media (max-width: 560px) {
+            .ut-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-<h1>Welcome to Utopia!</h1>
-<ul>
-    <li><a href="registry">Registry (legacy)</a></li>
-    <li><a href="registry.html">Registry (new)</a></li>
-    <li><a href="dmv">Utopia DMV</a></li>
-    <li><a href="bank_of_utopia">Bank of Utopia</a></li>
-    <li><a href="marketplace">Marketplace</a></li>
-    <li><a href="upay">UPay (Money Transfer)</a></li>
-</ul>
+<!-- Header and footer come from utopia-chrome.js, shared with every service. -->
+<main class="ut-page">
+    <div class="ut-hero">
+        <div>
+            <p class="ut-eyebrow">The Utopia universe</p>
+            <h1 class="ut-title">Welcome to Utopia.</h1>
+            <p class="ut-lead">A small, entirely invented state where the paperwork actually works.
+                The Registry keeps the records, the DMV and the Bank issue digital credentials to
+                your wallet, and the Marketplace and UPay ask for exactly as much as they need — and
+                not a field more.</p>
+            <div class="ut-actions">
+                <a class="ut-btn ut-btn--primary" href="dmv/">Get a driver license</a>
+                <a class="ut-btn ut-btn--secondary" href="marketplace/">Browse the marketplace</a>
+            </div>
+            <p class="ut-disclaimer">Utopia is a demonstration environment for the Multipaz
+                digital-credential stack. Nothing here is real: no real people, no real money, no
+                real groceries. Credentials issued here are test artifacts and are accepted nowhere
+                outside this playground.</p>
+        </div>
+
+        <div class="ut-art" aria-hidden="true">
+            <div class="ut-art-disc"></div>
+            <div class="ut-art-disc ut-art-disc--inner"></div>
+            <div class="ut-card">
+                <div class="ut-card-kicker">Utopia driver licence</div>
+                <div class="ut-card-portrait">portrait</div>
+                <div class="ut-card-name">Pivo Miller</div>
+                <div class="ut-card-doctype">org.iso.18013.5.1.mDL</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="ut-offices">
+        <h2>Offices of the state</h2>
+        <p class="ut-offices-note">Two issuers, one system of record, and two places to spend what
+            you hold.</p>
+
+        <div class="ut-grid">
+            <a class="ut-tile" href="registry/">
+                <div class="ut-tile-mark">R</div>
+                <div class="ut-tile-title">Registry</div>
+                <div class="ut-tile-body">The system of record. Every fictional resident and the
+                    data the state holds on them — the source every credential is built from.
+                </div>
+                <div class="ut-tile-proto">System of record</div>
+            </a>
+
+            <a class="ut-tile" href="dmv/">
+                <div class="ut-tile-mark">D</div>
+                <div class="ut-tile-title">Utopia DMV</div>
+                <div class="ut-tile-body">Issues the mobile driving licence to your wallet. Utopia
+                    stopped printing plastic; you decide which parts anyone gets to see.
+                </div>
+                <div class="ut-tile-proto">OpenID4VCI · ISO 18013-5 mDL</div>
+            </a>
+
+            <a class="ut-tile" href="bank_of_utopia/">
+                <div class="ut-tile-mark">B</div>
+                <div class="ut-tile-title">Bank of Utopia</div>
+                <div class="ut-tile-body">Issues the payment card credential your wallet signs with.
+                    No card number is ever typed into a merchant's form.
+                </div>
+                <div class="ut-tile-proto">OpenID4VCI · Payment credential</div>
+            </a>
+
+            <a class="ut-tile" href="marketplace/">
+                <div class="ut-tile-mark">M</div>
+                <div class="ut-tile-title">Marketplace</div>
+                <div class="ut-tile-body">Groceries and everyday essentials. Age-restricted items
+                    ask
+                    for a digital ID and learn that you are over 18 — never your date of birth.
+                </div>
+                <div class="ut-tile-proto">OpenID4VP · Digital Credentials API</div>
+            </a>
+
+            <a class="ut-tile" href="upay/">
+                <div class="ut-tile-mark">U</div>
+                <div class="ut-tile-title">UPay</div>
+                <div class="ut-tile-body">Send money between accounts. Your wallet signs the payment
+                    authorization and that is the whole ceremony.
+                </div>
+                <div class="ut-tile-proto">OpenID4VP · ISO 18013-7 Annex C</div>
+            </a>
+        </div>
+
+        <p class="ut-alt">The Registry has a second front-end: the
+            <a href="registry.html">Registry console</a>, a Kotlin/JS build of the same records
+            service.</p>
+    </section>
+</main>
 </body>
 </html>

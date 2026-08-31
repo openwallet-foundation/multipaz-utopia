@@ -1,0 +1,321 @@
+/* ==========================================================================
+   Utopia theme for the Registry's legacy pages
+   --------------------------------------------------------------------------
+   SHADOWS multipaz-records.jar's own resources/www/style.css, by the same
+   classpath-precedence mechanism described in the OpenID4VCI theme file.
+
+   These pages are NOT dead code. The Registry React app links out to
+   offer.html for the credential-offer flow (RecordsApp.kt), so an untheming
+   here shows up as a style break in the middle of a live demo path.
+
+   Markup targeted (all shipped by the jar):
+     index.html   -> table#list, th#offer, .purpose, form input[type=submit]
+     person.html  -> body.wide, #core, #records, #recordType, #addRecord,
+                     .actions, #save, #delete
+     offer.html   -> label > span pairs, #offers, .qr, and a page-local
+                     <style> block that overrides label/select/input — that
+                     block loads after this file and deliberately wins.
+     account.html -> .record, .row, .label, .field, .field-block
+     person.js    -> .core, .record, .item, .row, .row_section, .controls,
+                     .field-block, .label, .field, .icon, .list,
+                     .list_actions, .actions
+     metadata.js  -> .state_name, .official_name, .subject_name (text of these
+                     is replaced after fetch; they are <i> elements)
+     login.js     -> #login, .logged_in / .logged_out (toggled by an injected
+                     <style> setting display:none — never set `display` on
+                     those two classes here.)
+   ========================================================================== */
+
+@import "utopia-base.css";
+
+/* person.js renders schema icons as Material Symbols ligatures. */
+@import "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined";
+
+/* -- Masthead ------------------------------------------------------------
+   metadata.js swaps the text of .state_name / .official_name / .subject_name
+   after fetching /identity/metadata. They are <i>, so the italic has to be
+   undone where they sit inside a heading.                                */
+
+h1.state_name {
+    font-style: normal;
+}
+
+.purpose i,
+p i {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--utopia-accent);
+}
+
+.purpose {
+    max-width: var(--utopia-measure);
+    color: var(--utopia-ink-soft);
+    font-size: var(--utopia-text-base);
+}
+
+/* -- Identity list (index.html) ------------------------------------------
+   The artboards present the register as a rounded panel with a tinted header
+   strip and hairline row rules. The jar emits a bare <table>, so the panel is
+   drawn on the table itself rather than on a wrapper we cannot add.       */
+
+table#list {
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius);
+    border-spacing: 0;
+    overflow: hidden;
+    background: var(--utopia-surface-raised);
+    margin: 1.5em 0;
+}
+
+table#list th {
+    background: var(--utopia-surface);
+    border-bottom: 1px solid var(--utopia-border);
+    padding: 14px 24px;
+}
+
+table#list td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--utopia-border);
+}
+
+table#list tr:last-child td { border-bottom: none; }
+
+table#list tbody tr:hover,
+table#list tr:hover { background: var(--utopia-accent-soft); }
+
+/* Utopia id (3rd column): the link into a record. Monospace and underlined. */
+table#list td:nth-child(3) a {
+    font-family: var(--utopia-font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--utopia-emphasis);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    border-bottom: none;
+    font-variant-numeric: tabular-nums;
+}
+
+/* The credential-offer cell (4th column, present only when an issuer is
+   configured) is a single link; chip it. */
+table#list td:nth-child(4) a {
+    display: inline-block;
+    font-family: var(--utopia-font-sans);
+    font-size: 11px;
+    text-decoration: none;
+    padding: 3px 10px;
+    border-radius: var(--utopia-radius-pill);
+    background: var(--utopia-accent-soft);
+    color: var(--utopia-emphasis);
+}
+
+/* -- Record sections (person.js / account.js) ----------------------------
+   The generator nests .core / .record > .item > .item. The jar sheet used
+   four pastel tints to signal that depth; these are the warm equivalents. */
+
+.core,
+.record {
+    margin: 1.25em 0;
+    padding: 18px 20px;
+    background: var(--utopia-surface-raised);
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius);
+    box-shadow: var(--utopia-shadow-md);
+}
+
+.core > h3,
+.record > h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--utopia-border);
+    font-family: var(--utopia-font-display);
+    font-size: 1.15rem;
+}
+
+.item,
+.row_section {
+    margin: 0.6em 0;
+    padding: 12px 14px;
+    background: var(--utopia-bg-sunken);
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius-sm);
+}
+
+/* One more level of nesting reads as a lighter well, not another colour. */
+.item .item,
+.row_section .row_section {
+    background: var(--utopia-surface);
+    border-left: 3px solid var(--utopia-emphasis);
+}
+
+.list {
+    margin: 0.4em 0;
+}
+
+/* -- Field rows ----------------------------------------------------------
+   person.js lays fields out with CSS table display. That model has to be
+   preserved or every form on these pages collapses.                      */
+
+.controls {
+    display: table;
+}
+
+.field-block {
+    display: table;
+    border-spacing: 0 6px;
+}
+
+.row {
+    display: table-row;
+}
+
+.row > * {
+    display: table-cell;
+    vertical-align: baseline;
+}
+
+.row > label,
+.label {
+    padding-right: 10px;
+    text-align: right;
+    font-size: var(--utopia-text-sm);
+    font-weight: 600;
+    color: var(--utopia-ink-soft);
+    white-space: nowrap;
+}
+
+.field {
+    font-family: var(--utopia-font-sans);
+    font-size: var(--utopia-text-base);
+    color: var(--utopia-ink);
+}
+
+.row > .icon {
+    padding: 6px 8px 0;
+    color: var(--utopia-emphasis);
+}
+
+.row .material-symbols-outlined,
+.icon .material-symbols-outlined {
+    font-size: 1.2em;
+    vertical-align: bottom;
+}
+
+/* -- Actions -------------------------------------------------------------- */
+
+.actions,
+.list_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 1.25em 0 0;
+    margin-top: 1em;
+    border-top: 1px solid var(--utopia-border);
+}
+
+.list_actions {
+    border-top: none;
+    margin-top: 0.4em;
+    padding-top: 0.4em;
+}
+
+/* Destructive action must not look like the primary one. */
+#delete {
+    color: var(--utopia-danger-strong);
+    background-color: transparent;
+    border-color: var(--utopia-danger);
+}
+
+#delete:hover {
+    color: var(--utopia-surface);
+    background-color: var(--utopia-danger);
+}
+
+/* person.js appends a bare "Delete <record>" button into a .actions div
+   inside each .record / .item (see its addField). It has no class, so it
+   would otherwise take the primary fill and read as the safe action. The
+   page-level .actions sits directly under #main, so these child selectors
+   do not touch #save. */
+.record > .actions > button,
+.item > .actions > button,
+.row_section > .actions > button {
+    color: var(--utopia-danger-strong);
+    background-color: transparent;
+    border-color: var(--utopia-danger);
+}
+
+.record > .actions > button:hover,
+.item > .actions > button:hover,
+.row_section > .actions > button:hover {
+    color: var(--utopia-surface-raised);
+    background-color: var(--utopia-danger);
+}
+
+/* -- Login control -------------------------------------------------------- */
+
+div#login {
+    float: right;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+div#login button {
+    color: var(--utopia-ink-soft);
+    background-color: transparent;
+    border-color: var(--utopia-border-strong);
+    padding: 6px 14px;
+    font-size: var(--utopia-text-xs);
+}
+
+div#login button:hover {
+    color: var(--utopia-ink);
+    background-color: transparent;
+    border-color: var(--utopia-ink);
+}
+
+div#login input[type=password] {
+    width: 180px;
+    padding: 6px 10px;
+    font-size: var(--utopia-text-sm);
+}
+
+div#main > h1 {
+    clear: both;
+}
+
+/* -- Credential offers (offer.html) --------------------------------------
+   offer.html carries its own <style> for the label/span rows; it loads
+   after this file and wins, which is intended. Only the generated results
+   in #offers are styled here.                                            */
+
+#offers {
+    margin-top: 1.75em;
+}
+
+#offers h2 {
+    font-family: var(--utopia-font-display);
+    color: var(--utopia-ink);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--utopia-border);
+}
+
+#offers h3 {
+    margin-top: 1.25em;
+}
+
+/* Pre-authorized offers are bearer secrets — the jar's own copy says so.
+   Give the transaction code the weight that warrants. */
+#offers code {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--utopia-emphasis-soft);
+    border: 1px solid var(--utopia-emphasis);
+    border-radius: var(--utopia-radius-xs);
+    font-size: 1.05em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}

@@ -7,35 +7,28 @@
     <title>OWF Multipaz UPay account</title>
     <script src="verify_credentials.js"></script>
     <script src="account.js"></script>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css"/>
+    <script>window.UTOPIA_SERVICE = "upay";</script>
+    <script src="utopia-chrome.js"></script>
 </head>
 <body>
-<main class="page">
+<!-- Header and footer come from utopia-chrome.js, shared with every service. -->
+<main class="up-page up-page--narrow">
     <div id="banner" class="banner" hidden></div>
 
-    <div class="card">
-        <div class="card-header">
-            <div class="brand-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3Z"/>
-                    <path d="M12 8v8M9.5 9.5h3.2a1.8 1.8 0 0 1 0 3.6H10m-.5 0h3.2a1.8 1.8 0 0 1 0 3.6"/>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h1>UPay Account</h1>
-                <p class="subtitle">Balance &amp; Transactions</p>
-            </div>
-        </div>
+    <p class="up-eyebrow">Balance &amp; transactions</p>
+    <h1 class="up-title">UPay Account</h1>
+    <p class="up-lead">Present your payment card to view your balance and recent activity. UPay
+        reads the account number from the card itself.</p>
 
+    <div class="up-card">
         <!-- No account number field: the account is named by the signed credential. -->
         <div id="intro">
             <p class="intro-text">
-                Present your payment card to view your balance and recent transactions.
-                UPay reads the account number from the card itself, so no one can look up
-                an account they cannot present.
+                Your wallet answers with the account reference on the card and nothing else —
+                no name, no balance history handed over to get the balance back.
             </p>
-            <button type="button" id="lookup-btn" onclick="viewAccount()">View My Account</button>
+            <button type="button" id="lookup-btn" onclick="viewAccount()">View my account</button>
         </div>
 
         <!-- Populated by account.js after a successful presentment. -->
@@ -57,7 +50,7 @@
         <p class="card-footer">
             <a href="index.html">Make a payment</a>
             &nbsp;&middot;&nbsp;
-            &copy; 2026 Utopia Universe UPay Service.
+            &copy; 2026 Utopia Universe UPay Service
         </p>
     </div>
 </main>
