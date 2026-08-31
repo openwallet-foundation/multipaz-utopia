@@ -1,5 +1,8 @@
 package org.multipaz.upay.server
 
+import io.ktor.http.ContentType
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.CancellationException
 import org.multipaz.documenttype.DocumentTypeRepository
@@ -46,6 +49,12 @@ class Main {
             }) { environment ->
                 routing {
                     configureVerifier(environment)
+                    get("/accounts") {
+                        call.respondText(
+                            contentType = ContentType.Application.Json,
+                            text = AccountDirectory.list().toString()
+                        )
+                    }
                 }
             }
         }

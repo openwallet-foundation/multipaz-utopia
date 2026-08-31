@@ -80,7 +80,7 @@ internal object AccountLookup: VerifierAssistant {
         }
         val accountNumber = card.signedStringClaim(CLAIM_PAYMENT_INSTRUMENT_ID)
             ?: throw InvalidRequestException("Payment card carries no account number")
-        val statement = AccountStatementClient.fetchStatement(accountNumber)
+        val statement = RegistryClient.fetchStatement(accountNumber)
         return buildJsonObject {
             put("account_number", accountNumber)
             put("holder_name", card.signedStringClaim(CLAIM_HOLDER_NAME) ?: "")

@@ -8,17 +8,16 @@ const ICON_ERROR =
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<circle cx="12" cy="12" r="10"/><path d="M12 8v4.5M12 16h.01"/></svg>';
 
-const MANUAL_ENTRY = "__manual__";
-
-// The eligible payee accounts are seeded in deployment/docker/init/records.json;
-// accounts.json is a slim list derived from it (account_number + label). We load
-// it into the dropdown so the user can pick a known account, with "Manual entry"
-// as a fallback for anything not in the list.
+// The eligible payee accounts come from the server's /accounts endpoint, which
+// derives them from the registry (the System of Record) on every cal
 async function loadAccounts() {
     const select = document.getElementById("account-select");
     try {
-        const accounts = await (await fetch("accounts.json")).json();
-        for (const account of accounts) {
+        const response = await fetch("accounts");
+        if (!response.ok) {
+            throw new Error("accounts responded " + response.status);
+        }
+        for (const account of await response.json()) {
             const option = document.createElement("option");
             option.value = account.account_number;
             option.textContent = account.label
@@ -27,29 +26,13 @@ async function loadAccounts() {
             select.appendChild(option);
         }
     } catch (e) {
-        // If the list can't be loaded, fall back to manual entry only.
-    }
-    const manual = document.createElement("option");
-    manual.value = MANUAL_ENTRY;
-    manual.textContent = "Manual entry…";
-    select.appendChild(manual);
-
-    select.addEventListener("change", syncAccountInput);
-    syncAccountInput();
-}
-
-// Keeps the hidden #account input (the value run() reads) in sync with the
-// dropdown, and reveals it for free-form typing when "Manual entry" is selected.
-function syncAccountInput() {
-    const select = document.getElementById("account-select");
-    const input = document.getElementById("account");
-    if (select.value === MANUAL_ENTRY) {
-        input.value = "";
-        input.hidden = false;
-        input.focus();
-    } else {
-        input.value = select.value;
-        input.hidden = true;
+        // The registry is unreachable, so there are no payees to offer. Say so in
+        // the control itself rather than leaving an empty box; its empty value
+        // keeps validateInputs() from letting the payment through.
+        const failed = document.createElement("option");
+        failed.value = "";
+        failed.textContent = "Could not load accounts";
+        select.appendChild(failed);
     }
 }
 
@@ -58,7 +41,7 @@ window.addEventListener("DOMContentLoaded", loadAccounts);
 async function run() {
     clearStatus();
 
-    const account = document.getElementById("account").value.trim();
+    const account = document.getElementById("account-select").value;
     const amountRaw = document.getElementById("amount").value.trim();
     const description = document.getElementById("description").value;
     const protocols = [];
@@ -69,10 +52,10 @@ async function run() {
         protocols.push("openid4vp-v1")
     }
 
-    // Validate only what is universally true — required fields, a positive
-    // amount, and at least one protocol. We deliberately do NOT check the account
-    // number's format: whether an account actually exists is the records server's
-    // call, so a well-formed-but-unknown account still goes through and fails there.
+    // Validate only what is universally true — a payee is selected and the amount
+    // is positive. The payee itself needs no format check: it can only be an
+    // account the registry just told us about, or the empty value we put there
+    // when the list could not be loaded.
     if (!validateInputs(account, amountRaw)) {
         return;
     }
@@ -113,7 +96,7 @@ function validateInputs(account, amountRaw) {
     let ok = true;
 
     if (account === "") {
-        setFieldError("account", "Please select or enter a payee account.");
+        setFieldError("account", "Please select a payee account.");
         ok = false;
     }
 
@@ -140,13 +123,11 @@ function setFieldError(field, message) {
         error.textContent = message;
         error.hidden = false;
     }
-    // Highlight the visible control: the manual input when shown, else the select.
-    if (field === "account") {
-        const input = document.getElementById("account");
-        (input.hidden ? document.getElementById("account-select") : input)
-            .classList.add("invalid");
-    } else if (field === "amount") {
-        document.getElementById("amount").classList.add("invalid");
+    const control = document.getElementById(
+        field === "account" ? "account-select" : field
+    );
+    if (control) {
+        control.classList.add("invalid");
     }
 }
 
