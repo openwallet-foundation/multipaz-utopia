@@ -42,9 +42,7 @@ of the payment processor both verifiers call.
 ./gradlew :organizations:marketplace:backend:run     # :8010
 ```
 
-Run each in its own terminal; every one of them blocks. The Registry's Kotlin/JS front-end is a
-separate module —
-see [organizations/registry/frontend/README.md](organizations/registry/frontend/README.md).
+Run each in its own terminal; every one of them blocks.
 
 The four non-Registry servers default to `http://localhost:8004` for both Registry URLs, which is
 what makes an end-to-end local flow work out of the box:
@@ -232,7 +230,7 @@ directories deleted so they re-enroll against the new root.
 
 ```
 organizations/<org>/backend    # Ktor/Netty server
-organizations/<org>/frontend   # Storefront or console assets, served off the backend classpath
+organizations/<org>/frontend   # Storefront assets, served off the backend classpath
 organizations/marketplace/mcp  # Node/TypeScript MCP storefront, npm build driven from Gradle
 shared/issuer                  # Issuer logic shared by DMV and Bank of Utopia
 shared/theme                   # Design tokens, palettes, and the two shadowing stylesheets
@@ -245,7 +243,6 @@ deployment/                    # Container image: nginx, per-service config, sta
 |----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
 | [organizations/marketplace/README.md](organizations/marketplace/README.md)             | Marketplace checkout, age verification, payment transaction                             |
 | [organizations/marketplace/mcp/README.md](organizations/marketplace/mcp/README.md)     | Agentic MCP storefront                                                                  |
-| [organizations/registry/frontend/README.md](organizations/registry/frontend/README.md) | Registry front-end development                                                          |
 | [shared/theme/README.md](shared/theme/README.md)                                       | Palettes, design tokens, and how one theme reaches every service                        |
 | [deployment/README.md](deployment/README.md)                                           | Building, running, and deploying the container bundle                                   |
 | [deployment/docker/init/UPDATING.md](deployment/docker/init/UPDATING.md)               | Updating Registry seed data                                                             |

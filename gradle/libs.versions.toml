@@ -16,11 +16,6 @@ postgresql = "42.7.8"
 navigation-plugin = "2.9.6"
 buildconfig = "6.0.5"
 skie = "0.10.8"
-# Kotlin/JS wrappers; require `./gradlew kotlinUpgradeYarnLock` after version changes
-# this is how npm works, that will update kotlin-js-store/yarn.lock (part of the repo)
-kotlin-wrappers = "2025.12.1"
-kotlin-wrappers-rx = "2025.12.1-19.2.0"
-kotlin-wrappers-em = "2025.12.1-11.14.0"
 multipaz = "0.101.0-SNAPSHOT"
 
 [libraries]
@@ -51,12 +46,8 @@ zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "hsqldb" }
 mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
 postgresql = { module="org.postgresql:postgresql", version.ref = "postgresql" }
-kotlin-wrappers-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref= "kotlin-wrappers-rx" }
-kotlin-wrappers-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref= "kotlin-wrappers-rx" }
-kotlin-wrappers-emotion-react-js = { module = "org.jetbrains.kotlin-wrappers:kotlin-emotion-react-js", version.ref="kotlin-wrappers-em" }
 
 [plugins]
-kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation-plugin" }

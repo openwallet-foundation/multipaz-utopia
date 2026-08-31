@@ -1,5 +1,5 @@
 # Multipaz Server Bundle
-# Single image containing all reference servers and web frontend
+# Single image containing all reference servers
 
 FROM eclipse-temurin:17-jre-jammy
 
@@ -35,8 +35,9 @@ COPY deployment/docker/services /etc/multipaz
 # Root web resource(s)
 COPY deployment/docker/web /app/web
 
-# Copy registry web frontend (built by Gradle before docker build)
-COPY organizations/registry/frontend/build/dist/js/productionExecutable /app/web
+# The landing page links the shared design tokens and chrome as siblings of
+# itself, so they are staged into the same directory (see shared/theme/README)
+COPY shared/theme/common/resources/www /app/web
 RUN chmod -R 755 /app/web
 
 # Copy initial data

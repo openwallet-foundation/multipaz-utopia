@@ -78,13 +78,6 @@ tasks.register("collectDependencies") {
     }
 }
 
-tasks.register("buildWebFrontend") {
-    description = "Build the web frontend (Kotlin/JS)"
-    group = "deployment"
-
-    dependsOn(":organizations:registry:frontend:jsBrowserDistribution")
-}
-
 tasks.register("buildMcp") {
     description = "Build the MCP storefront bundle the Docker image copies in"
     group = "deployment"
@@ -93,10 +86,10 @@ tasks.register("buildMcp") {
 }
 
 tasks.register("buildAll") {
-    description = "Build all server JARs, the web frontend and the MCP storefront"
+    description = "Build all server JARs and the MCP storefront"
     group = "deployment"
 
-    dependsOn("collectDependencies", "buildWebFrontend", "buildMcp")
+    dependsOn("collectDependencies", "buildMcp")
 }
 
 // Helper function to get container tool (podman or docker)

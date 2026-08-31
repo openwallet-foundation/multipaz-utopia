@@ -92,11 +92,10 @@ and `multipaz-openid4vci.jar`, and this module replaces it wholesale.
 | `dmv/backend`            | `common` + `openid4vci` | **shadows** `multipaz-openid4vci.jar`   |
 | `bank_of_utopia/backend` | `common` + `openid4vci` | **shadows** `multipaz-openid4vci.jar`   |
 
-The Registry **React** front-end is the exception: nginx serves it from
-`/app/web`, so it never touches the classpath. Its `build.gradle.kts` stages
-`utopia-theme.css` into the browser distribution with the `stageUtopiaTheme` task
-instead, and adds the staged directory to the dev server's `static` list so
-`jsBrowserDevelopmentRun` matches production.
+The Utopia landing page is the exception: nginx serves it from `/app/web` with
+no service behind it, so it never touches a classpath. The Dockerfile copies
+`common/resources/www` into that same directory, which is what its
+`<link rel="stylesheet" href="utopia-theme.css">` resolves against.
 
 ### The chrome, on pages this repo does not own
 
@@ -133,9 +132,9 @@ Stylesheets that already have a design of their own import the tokens **only**:
 @import "utopia-theme.css";
 ```
 
-Marketplace, UPay and the Registry React app do this. Marketplace and UPay keep
-their existing local variable names as thin aliases (`--bg: var(--utopia-bg)`),
-so several hundred lines of downstream rules needed no edit.
+Marketplace and UPay do this, and both keep their existing local variable names
+as thin aliases (`--bg: var(--utopia-bg)`), so several hundred lines of
+downstream rules needed no edit.
 
 Stylesheets for pages that ship with almost no styling of their own — the two
 shadowing sheets in this module — import the base instead, which pulls in the

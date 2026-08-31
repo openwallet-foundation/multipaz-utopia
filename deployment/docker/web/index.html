@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to Utopia</title>
 
-    <!-- The design tokens and the shared chrome arrive in /app/web with the
-         Registry front-end bundle (Dockerfile copies build/dist/js/
-         productionExecutable over this directory), so they are siblings of
-         this file at runtime. Layout below is inlined because this is the one
-         page nginx serves that has no service behind it. -->
+    <!-- The design tokens and the shared chrome are staged alongside this file
+         in /app/web (the Dockerfile copies shared/theme/common/resources/www
+         into the same directory), so they are siblings at runtime. Layout below
+         is inlined because this is the one page nginx serves that has no
+         service behind it. -->
     <link rel="stylesheet" href="utopia-theme.css">
     <script src="utopia-chrome.js"></script>
 
@@ -183,14 +183,6 @@
             color: var(--utopia-emphasis);
         }
 
-        .ut-alt {
-            margin-top: 26px;
-            font-size: 13px;
-            color: color-mix(in srgb, var(--utopia-ink) 55%, transparent);
-        }
-
-        .ut-alt a { color: var(--utopia-accent); }
-
         @media (max-width: 900px) {
             .ut-hero { grid-template-columns: 1fr; gap: 32px; }
             .ut-art { height: 300px; }
@@ -288,10 +280,6 @@
                 <div class="ut-tile-proto">OpenID4VP · ISO 18013-7 Annex C</div>
             </a>
         </div>
-
-        <p class="ut-alt">The Registry has a second front-end: the
-            <a href="registry.html">Registry console</a>, a Kotlin/JS build of the same records
-            service.</p>
     </section>
 </main>
 </body>
