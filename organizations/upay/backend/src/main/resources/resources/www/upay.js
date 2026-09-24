@@ -84,7 +84,7 @@ async function run() {
         // An unknown/invalid payee account fails in createTransaction, before the
         // wallet is ever invoked, so the verifier client throws instead of
         // returning an {error}. Surface it as a decline rather than freezing.
-        showError(null, "The payment could not be initiated. Unknown error occurred.");
+        showError(e, "The payment could not be initiated. Unknown error occurred.");
     } finally {
         btn.disabled = false;
     }

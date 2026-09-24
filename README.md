@@ -44,6 +44,18 @@ of the payment processor both verifiers call.
 
 Run each in its own terminal; every one of them blocks.
 
+Or, to launch every backend `run` task from one Bash terminal, enable Gradle's parallel task
+execution:
+
+```bash
+./gradlew run --parallel
+```
+
+Without `--parallel`, Gradle waits for the first long-running server task to exit before it starts
+the next one. On a fresh local environment, restart UPay and Marketplace after the Registry is
+listening if either logs that it could not load the IACA root. They fetch that root once during
+startup.
+
 The four non-Registry servers default to `http://localhost:8004` for both Registry URLs, which is
 what makes an end-to-end local flow work out of the box:
 

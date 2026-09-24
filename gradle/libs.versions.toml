@@ -16,7 +16,7 @@ postgresql = "42.7.8"
 navigation-plugin = "2.9.6"
 buildconfig = "6.0.5"
 skie = "0.10.8"
-multipaz = "0.101.0-SNAPSHOT"
+multipaz = "0.101.0"
 
 [libraries]
 multipaz = { group = "org.multipaz", name = "multipaz", version.ref = "multipaz" }
