@@ -19,7 +19,8 @@
         payment credential. Age-restricted items ask for a digital ID, verified in seconds at
         checkout.</p>
 
-    <!-- Aisles are rendered from catalog.js -->
+    <!-- Aisles are rendered from GET /catalog (see catalog.js) -->
+    <p id="catalog-status" class="mk-status">Loading…</p>
     <div id="aisles"></div>
 
     <div class="mk-banner">
@@ -39,46 +40,58 @@
 <script src="catalog.js"></script>
 <script>
     // One section per aisle: a titled rule, then a grid of product tiles.
-    (function () {
+    function renderAisles() {
+        const status = document.getElementById("catalog-status");
         const root = document.getElementById("aisles");
-        AISLES.forEach(function (aisle) {
-            const items = PRODUCTS.filter(function (p) { return p.aisle === aisle.id; });
-            if (!items.length) return;
+        status.textContent = "Loading…";
+        status.hidden = false;
+        root.innerHTML = "";
 
-            const section = document.createElement("section");
-            section.className = "mk-aisle";
-            section.id = "aisle-" + aisle.id;
+        loadCatalog().then(function (catalog) {
+            status.hidden = true;
+            catalog.aisles.forEach(function (aisle) {
+                const items = catalog.products.filter(function (p) { return p.aisle === aisle.id; });
+                if (!items.length) return;
 
-            const head = document.createElement("div");
-            head.className = "mk-aisle-head";
-            head.innerHTML =
-                "<h3>" + escapeHtml(aisle.name) + "</h3>" +
-                '<span class="mk-aisle-note">' + escapeHtml(aisle.blurb) + "</span>";
-            section.appendChild(head);
+                const section = document.createElement("section");
+                section.className = "mk-aisle";
+                section.id = "aisle-" + aisle.id;
 
-            const grid = document.createElement("div");
-            grid.className = "mk-grid";
-            items.forEach(function (p) {
-                const card = document.createElement("a");
-                card.className = "mk-tile";
-                card.href = "product.html?id=" + p.id;
-                card.innerHTML =
-                    '<span class="mk-art washed" style="background:' + p.tint + '">' +
-                        '<span class="mk-glyph">' + p.glyph + "</span>" +
-                        (p.ageRestricted ? '<span class="mk-age">18+</span>' : "") +
-                    "</span>" +
-                    '<span class="mk-name">' + escapeHtml(p.name) + "</span>" +
-                    '<span class="mk-kicker">' + escapeHtml(p.tagline) + "</span>" +
-                    '<span class="mk-priceRow">' +
-                        '<span class="mk-price">$' + escapeHtml(p.price) + "</span> " +
-                        '<span class="mk-unit">' + escapeHtml(p.unit) + "</span>" +
-                    "</span>";
-                grid.appendChild(card);
+                const head = document.createElement("div");
+                head.className = "mk-aisle-head";
+                head.innerHTML =
+                    "<h3>" + escapeHtml(aisle.name) + "</h3>" +
+                    '<span class="mk-aisle-note">' + escapeHtml(aisle.blurb) + "</span>";
+                section.appendChild(head);
+
+                const grid = document.createElement("div");
+                grid.className = "mk-grid";
+                items.forEach(function (p) {
+                    const card = document.createElement("a");
+                    card.className = "mk-tile";
+                    card.href = "product.html?id=" + p.id;
+                    card.innerHTML =
+                        '<span class="mk-art washed" style="background:' + tintVar(p.tint) + '">' +
+                            '<span class="mk-glyph">' + escapeHtml(p.glyph) + "</span>" +
+                            (p.ageRestricted ? '<span class="mk-age">18+</span>' : "") +
+                        "</span>" +
+                        '<span class="mk-name">' + escapeHtml(p.name) + "</span>" +
+                        '<span class="mk-kicker">' + escapeHtml(p.tagline) + "</span>" +
+                        '<span class="mk-priceRow">' +
+                            '<span class="mk-price">$' + escapeHtml(p.price) + "</span> " +
+                            '<span class="mk-unit">' + escapeHtml(p.unit) + "</span>" +
+                        "</span>";
+                    grid.appendChild(card);
+                });
+                section.appendChild(grid);
+                root.appendChild(section);
             });
-            section.appendChild(grid);
-            root.appendChild(section);
+        }).catch(function (err) {
+            console.error(err);
+            renderCatalogError(status, renderAisles);
         });
-    })();
+    }
+    renderAisles();
 </script>
 </body>
 </html>

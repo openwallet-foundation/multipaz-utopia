@@ -2,7 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
-import { buildStore } from "../src/server.js";
+import { buildStore, catalogUrlFromEnv } from "../src/server.js";
+import { fixtureCatalog } from "./helpers.js";
 
 // Bind the storefront's Express app to an ephemeral port ourselves so we get the REAL assigned
 // port (the SDK's store.listen(0) returns the argument, not the OS port) and can close cleanly.
@@ -13,7 +14,7 @@ async function listenApp(app: http.RequestListener): Promise<{ server: http.Serv
 }
 
 async function withServer(fn: (port: number) => Promise<void>): Promise<void> {
-  const { store } = buildStore();
+  const { store } = buildStore({ catalog: fixtureCatalog() });
   const { server, port } = await listenApp(store.app as unknown as http.RequestListener);
   try {
     await fn(port);
@@ -112,4 +113,24 @@ test("checkout is gated: an age-restricted order surfaces age and payment requir
     // stack issues none. Every requirement surfaced here is one it can actually vouch for.
     assert.equal(byId.has("membership"), false, "checkout must not ask for a membership credential");
   });
+});
+
+test("catalog URL: MARKETPLACE_CATALOG_URL wins", () => {
+  assert.equal(
+    catalogUrlFromEnv({ MARKETPLACE_CATALOG_URL: "http://cat/x", MARKETPLACE_KOTLIN_BASE: "http://k" }),
+    "http://cat/x",
+  );
+});
+
+test("catalog URL: derived from MARKETPLACE_KOTLIN_BASE, trailing slash tolerated", () => {
+  assert.equal(catalogUrlFromEnv({ MARKETPLACE_KOTLIN_BASE: "http://localhost:8100/marketplace/" }), "http://localhost:8100/marketplace/catalog");
+});
+
+test("catalog URL: defaults to the local backend", () => {
+  assert.equal(catalogUrlFromEnv({}), "http://localhost:8010/catalog");
+});
+
+test("buildStore exposes the catalog it was given", () => {
+  const catalog = fixtureCatalog();
+  assert.equal(buildStore({ catalog }).catalog, catalog);
 });

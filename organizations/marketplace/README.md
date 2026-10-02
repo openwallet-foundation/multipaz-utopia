@@ -16,7 +16,7 @@ Checkout is **conditional per item**:
 ```
 marketplace/
 ├── backend/    # Ktor/Netty server — verifier + /checkout API + cart checkout + page routes
-├── frontend/   # Static HTML/CSS/JS storefront (+ checkout.html/js for the MCP flow)
+├── frontend/   # Static HTML/CSS/JS storefront
 └── mcp/        # Node/TS agentic MCP storefront (CredentAgent) — hands off to UPay/DPC
 ```
 
@@ -27,10 +27,10 @@ Gradle project: `:multipaz-utopia:organizations:marketplace:backend`
 | File | Purpose |
 |---|---|
 | `Main.kt` | Entry point — wires `DocumentTypeRepository`, `TrustManagerInterface`, and `MarketplaceVerifierAssistant` then starts the server |
-| `ApplicationExt.kt` | Mounts verifier endpoints + the checkout routes (`/checkout`, `/checkout/order`, `/checkout/complete`, `/checkout/order-status`) |
-| `MarketplaceHandler.kt` | Single-product `/checkout` and cart `/checkout/order` handlers, the age-restricted and payment-only DCQL queries, `dcqlRequestsAge()`, and `MarketplaceVerifierAssistant` (conditional age-check + payment logic) |
-| `MarketplaceCatalog.kt` | Server-authoritative product catalog — checkout looks up price and the age-restricted flag here by `productId` rather than trusting them from the request body |
-| `MarketplaceCheckoutStatus.kt` | The MCP checkout page redirect + `/checkout/complete` and `/checkout/order-status` (backs the storefront widget's completion poll) |
+| `ApplicationExt.kt` | Mounts verifier endpoints, `GET /catalog`, `POST /checkout`, and the `/delegated/{request,result,settle}` routes |
+| `MarketplaceHandler.kt` | The single-product `/checkout` handler, the age-restricted and payment-only DCQL queries, `dcqlRequestsAge()`, and `MarketplaceVerifierAssistant` (conditional age-check + payment logic) |
+| `MarketplaceCatalog.kt` | The single, server-authoritative catalog — loads and validates `resources/catalog.json` at startup, serves it at `GET /catalog`, and backs checkout's price + age-restricted lookup by `productId` |
+| `resources/catalog.json` | The catalog data: aisles, products (price, `ageRestricted`, display content, `glyph` + `tint` palette index — both storefronts draw the product tile from these) and reviews. Edit products here — both storefronts pick the change up |
 
 **Server port:** `8010`  
 **URL prefix (behind nginx):** `/marketplace/`
@@ -43,14 +43,13 @@ Static resources served directly from the backend classpath (copied via `process
 
 | File | Purpose |
 |---|---|
-| `catalog.js` | **Source of truth** for the storefront — the product list (with per-item `ageRestricted` flag), the aisle order, and the inline `tile()` image generator, shared by both pages |
+| `catalog.js` | Catalog loader shared by both pages — fetches `GET /catalog` and provides `findProduct()`, `tintVar()` and the load-error message. Holds no product data |
 | `index.html` | Renders the catalog grouped into aisle sections (age-restricted items carry an `18+` badge) |
 | `product.html` | Product detail + checkout flow |
 | `marketplace.css` | Storefront styles |
 | `marketplace.js` | Product-detail rendering + checkout orchestration — calls `/checkout` with the `productId`, drives `multipazVerifyCredentials()` |
-| `checkout.html` / `checkout.js` | Cart-aware checkout page for the `mcp/` storefront — fetches the order from the MCP server, then posts the cart to `/checkout/order` and runs the same UPay/DPC `multipazVerifyCredentials()` flow |
 
-Product images are generated inline by `catalog.js` (`tile()`) as self-contained SVG data URIs — a category-tinted gradient with the product's emoji — so there are no binary image assets to ship.
+Product images are drawn from each product's `glyph` and `tint` in `catalog.json`: the web storefront paints the emoji on a `--utopia-tint-N` card, and the MCP draws the same tile as an SVG data URI (`glyphTile()` in `mcp/src/catalog.ts`) — so there are no binary image assets to ship.
 
 ### `mcp`
 
@@ -59,12 +58,14 @@ Node/TypeScript module whose npm build is driven from Gradle
 storefront built on [`@openmobilehub/credentagent-storefront`](https://github.com/openmobilehub/credentagent):
 an AI agent (Claude, ChatGPT, Goose, Claude Code) browses the catalog and builds a
 cart, and **checkout hands off** to this backend's UPay + Digital Payment Credential
-ceremony. The `checkout` tool returns a link to `GET /checkout`; the page re-prices
-the cart server-side via `POST /checkout/order` and runs `multipazVerifyCredentials()`
-(payment DPC, plus an age credential when the cart holds an age-restricted item).
+ceremony. The `checkout` tool returns a link to the MCP server's checkout page, which runs the
+payment ceremony through this backend's `/delegated/*` routes (payment DPC, plus an age credential
+when the cart holds an age-restricted item). The MCP prices each order from this backend's
+`GET /catalog` (TTL-cached; the last good copy is kept if a refresh fails), and `/delegated/request`
+binds the payment to the amount the MCP sends.
 
-Its catalog mirrors `MarketplaceCatalog.kt` / `catalog.js` (same ids, prices, and
-age-restricted flags). See [`mcp/README.md`](mcp/README.md).
+Its catalog is fetched from this backend's `GET /catalog` (cached for 60 s), so the MCP and the
+web storefront always sell the same products at the same prices. See [`mcp/README.md`](mcp/README.md).
 
 Run the MCP server (needs the records/enrollment + UPay + marketplace backend up):
 
@@ -97,7 +98,7 @@ Browser                          Marketplace Backend              Wallet App
 
 1. The user taps **Add to Cart & Check Out** on a product page.
 2. `marketplace.js` POSTs `{productId}` to `/checkout`.
-3. The backend looks the id up in its server-side catalog (`MarketplaceCatalog.kt`) to get the
+3. The backend looks the id up in its server-side catalog (`MarketplaceCatalog.kt`, loaded from `catalog.json`) to get the
    authoritative price and age-restricted flag, then picks the DCQL by that flag:
    - `false` → **`PAYMENT_ONLY_DCQL_QUERY`** (just the `payment` credential).
    - `true` → **`MARKETPLACE_DCQL_QUERY`** (an identity/age credential option **and** payment).

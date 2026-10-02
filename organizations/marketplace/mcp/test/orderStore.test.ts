@@ -5,7 +5,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createOrder } from "@openmobilehub/credentagent-storefront";
 import { FileOrderStore } from "../src/orderStore.js";
-import { catalog } from "../src/catalog.js";
+import { mapCatalog } from "../src/catalog.js";
+import { catalogFixture } from "./helpers.js";
+
+// Orders are priced against the backend-shaped fixture (p1 4.50, p2 2.20, p16 42.00).
+const catalog = mapCatalog(catalogFixture).products;
 
 function tempFile(): string {
   return join(mkdtempSync(join(tmpdir(), "mcp-orders-")), "orders.json");
@@ -24,9 +28,9 @@ test("write then read round-trips the order; clear removes it", async () => {
   const file = tempFile();
   try {
     const store = new FileOrderStore(file);
-    const order = createOrder([{ productId: "p15", quantity: 1 }], "ORD-9", catalog); // Reserve Red Wine 18.00
+    const order = createOrder([{ productId: "p2", quantity: 1 }], "ORD-9", catalog); // Organic Bananas 2.20
     await store.write("ORD-9", order);
-    assert.equal((await store.read("ORD-9"))?.total, 18);
+    assert.equal((await store.read("ORD-9"))?.total, 2.2);
     await store.clear("ORD-9");
     assert.equal(await store.read("ORD-9"), null);
   } finally {

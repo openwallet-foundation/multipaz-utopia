@@ -61,9 +61,11 @@ Swapping the backend is the `verifier` argument alone — the policy above stays
 
 ---
 
-## Quick start (offline, ~30 seconds)
+## Quick start (stand-in verifier)
 
-No stack, no wallet, no phone. Uses a stand-in verifier so the flow is clickable end-to-end.
+No wallet, no phone. Uses a stand-in verifier so the flow is clickable end-to-end. The catalog
+comes from the marketplace backend, so start it first:
+`./gradlew :organizations:marketplace:backend:run` (serves `GET /catalog` on `:8010`).
 
 ```bash
 npm install
@@ -217,6 +219,8 @@ Copy `.env.example` to `.env`. Everything has a working local default.
 |---|---|
 | `MARKETPLACE_KOTLIN_BASE` | Marketplace backend for the delegated verifier. **Unset ⇒ stand-in verifier** (nothing is real). |
 | `MARKETPLACE_VERIFIER_BASE` | Browser-facing base serving `verify_credentials.js`. Must be same-origin with the checkout page — normally `/marketplace`. |
+| `MARKETPLACE_CATALOG_URL` | Catalog endpoint. Default: `MARKETPLACE_KOTLIN_BASE` + `/catalog`, else `http://localhost:8010/catalog`. |
+| `MARKETPLACE_CATALOG_TTL_MS` | How long the fetched catalog is cached (default `60000`). A failed refresh keeps serving the last good copy. |
 
 **Server**
 
@@ -236,7 +240,8 @@ Copy `.env.example` to `.env`. Everything has a working local default.
 | `VERDICT` | Stand-in verdict: `ok` \| `wrong-amount` \| `underage` \| `declined`. |
 
 > `MARKETPLACE_AGE` alone does not raise the age actually enforced: the delegated age re-check
-> reads the threshold from the order's catalog `minimumAge`. Raise both.
+> reads the threshold from the order's catalog `minimumAge`, which `catalog.ts` sets to 18 for
+> every product the backend marks `ageRestricted`.
 
 ---
 
@@ -247,7 +252,7 @@ src/
   main.ts        entry point — what the deployed image runs
   server.ts      storefront + gate wiring, and the policy
   verifier.ts    the DelegatedVerifier adapter (real Multipaz/UPay + the stand-in)
-  catalog.ts     products (mirrors the backend catalog)
+  catalog.ts     fetches + caches the backend's GET /catalog as CredentAgent products
   orderStore.ts  file-backed order persistence
   dev-serve.ts   dev harness: /dev/buy, /dev/ledger, same-origin proxy — NOT shipped
 ```

@@ -1,0 +1,33 @@
+{
+  "currency": "USD",
+  "aisles": [
+    { "id": "produce", "name": "Fresh Produce", "blurb": "Picked at peak ripeness from local growers." },
+    { "id": "spirits", "name": "Beer, Wine & Spirits", "blurb": "Age-restricted — a quick credential check at checkout." }
+  ],
+  "products": [
+    {
+      "id": 1, "aisle": "produce", "name": "Red Delicious Apples", "price": "4.50", "ageRestricted": false,
+      "unit": "1 kg bag", "tagline": "CRISP & SWEET", "description": "Hand-picked orchard apples.",
+      "highlights": ["Local Orchard"], "specs": { "Aisle": "Fresh Produce" }, "note": "Local.",
+      "glyph": "🍎", "tint": 2,
+      "reviews": [
+        { "author": "Mia R.", "rating": 5, "text": "Genuinely crisp and sweet — kids devour them." },
+        { "author": "Devin K.", "rating": 4, "text": "Fresh and consistent week to week." }
+      ]
+    },
+    {
+      "id": 2, "aisle": "produce", "name": "Organic Bananas", "price": "2.20", "ageRestricted": false,
+      "unit": "bunch of 5", "tagline": "FAIRTRADE", "description": "Naturally ripened Fairtrade bananas.",
+      "highlights": ["Organic"], "specs": { "Aisle": "Fresh Produce" }, "note": "Fairtrade.",
+      "glyph": "🍌", "tint": 2,
+      "reviews": []
+    },
+    {
+      "id": 16, "aisle": "spirits", "name": "Old Oak Bourbon", "price": "42.00", "ageRestricted": true,
+      "unit": "700 ml", "tagline": "SMALL BATCH", "description": "Small-batch straight bourbon.",
+      "highlights": ["Aged 12 Years"], "specs": { "Aisle": "Beer, Wine & Spirits" }, "note": "18+.",
+      "glyph": "🥃", "tint": 5,
+      "reviews": [ { "author": "Quinn R.", "rating": 5, "text": "Smooth with a warm oak finish. Worth it." } ]
+    }
+  ]
+}

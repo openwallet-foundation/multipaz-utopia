@@ -7,7 +7,11 @@
 //   open http://localhost:3005/dev/buy             # Old Oak Bourbon (18+) → age, then payment
 //   open http://localhost:3005/dev/buy?item=p1     # apples → payment only
 //
-// Verifier: LOCAL STAND-IN by default (offline, presence-only-demo). Set MARKETPLACE_KOTLIN_BASE
+// Catalog: fetched from the marketplace backend's GET /catalog (MARKETPLACE_CATALOG_URL, else
+// MARKETPLACE_KOTLIN_BASE + /catalog, else http://localhost:8010/catalog) — so the backend must be
+// running even for the stand-in verifier.
+//
+// Verifier: LOCAL STAND-IN by default (presence-only-demo). Set MARKETPLACE_KOTLIN_BASE
 // to drive the real Multipaz + UPay backend, and VERDICT=wrong-amount|underage|declined to watch
 // the gate refuse a misbehaving verifier before any (simulated) money moves.
 import type { Order } from "@openmobilehub/credentagent-storefront";
@@ -15,7 +19,6 @@ import type { CompletedOrderRecord } from "@openmobilehub/credentagent-storefron
 import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
 import { buildStore } from "./server.js";
 import { FileOrderStore, completedOrdersFile, createdOrdersFile } from "./orderStore.js";
-import { catalog } from "./catalog.js";
 
 const PORT = Number(process.env.MCP_PORT ?? 3005);
 
@@ -25,7 +28,7 @@ const completedOrderStore = new FileOrderStore<CompletedOrderRecord>(completedOr
 // MCP_BASE_URL lets a tunnel (e.g. cloudflared) set the public origin so the checkout link the
 // `checkout` tool mints is openable off-device (a phone). Falls back to localhost for local dev.
 const baseUrl = process.env.MCP_BASE_URL ?? `http://localhost:${PORT}`;
-const { store, usingStandIn } = buildStore({ createdOrderStore, completedOrderStore, baseUrl });
+const { store, catalog, usingStandIn } = buildStore({ createdOrderStore, completedOrderStore, baseUrl });
 
 // Same-origin proxy (real backend only): forward /marketplace/* to the Kotlin stack so the
 // delegated page + the Multipaz verifier share ONE origin (the tunnel) — the wallet ceremony is
@@ -46,9 +49,14 @@ store.app.use(
 
 // Mint an order and jump into the delegated page. The line's price/age come from the catalog at
 // re-price time (invariant 2), so seeding only the id + quantity is enough.
-store.app.get("/dev/buy", (req, res) => {
+store.app.get("/dev/buy", async (req, res) => {
   const itemId = typeof req.query.item === "string" ? req.query.item : "p16"; // Old Oak Bourbon (18+)
-  const p = catalog.find((c) => c.id === itemId) ?? catalog[0];
+  const products = await catalog.load().catch((err: unknown) => {
+    res.status(503).type("text").send(err instanceof Error ? err.message : String(err));
+    return null;
+  });
+  if (!products) return;
+  const p = products.find((c) => c.id === itemId) ?? products[0];
   const id = `ORD-${Math.random().toString(36).slice(2, 8)}`;
   // Seed a FULL order line (incl. minimumAge) so the checkout page's gate resolver sees the
   // age restriction — the real `checkout` tool builds this from the catalog; the store re-prices

@@ -1,24 +1,44 @@
 // ---------------------------------------------------------------------------
 // Utopia Marketplace — product detail page + checkout orchestration.
-// The catalog itself lives in catalog.js (shared with index.html).
+// The catalog is fetched from GET /catalog via catalog.js (shared with index.html).
 // ---------------------------------------------------------------------------
 
+let currentCatalog = null;
+
 function aisleName(aisleId) {
-    const a = AISLES.find(function (x) { return x.id === aisleId; });
+    const a = currentCatalog.aisles.find(function (x) { return x.id === aisleId; });
     return a ? a.name : "";
 }
 
 // ---------------------------------------------------------------------------
 // Page initialisation
 // ---------------------------------------------------------------------------
-window.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("DOMContentLoaded", showProductPage);
+
+function showProductPage() {
+    const status = document.getElementById("catalog-status");
+    status.textContent = "Loading…";
+    status.hidden = false;
+
+    loadCatalog().then(function (catalog) {
+        currentCatalog = catalog;
+        status.hidden = true;
+        document.getElementById("product-panel").hidden = false;
+        renderProduct(catalog);
+    }).catch(function (err) {
+        console.error(err);
+        renderCatalogError(status, showProductPage);
+    });
+}
+
+function renderProduct(catalog) {
     const params = new URLSearchParams(location.search);
     const id = parseInt(params.get("id")) || 1;
-    const product = findProduct(id) || PRODUCTS[0];
+    const product = findProduct(catalog, id) || catalog.products[0];
     window._currentProduct = product;
 
     // Artwork is a palette tint plus the product's emoji (see catalog.js).
-    document.getElementById("product-art").style.background = product.tint;
+    document.getElementById("product-art").style.background = tintVar(product.tint);
     document.getElementById("product-glyph").textContent = product.glyph;
     document.getElementById("product-name").textContent = product.name;
     document.getElementById("product-description").textContent = product.description;
@@ -38,6 +58,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
     // Highlights.
     const hl = document.getElementById("product-highlights");
+    hl.innerHTML = "";
     product.highlights.forEach(function (h) {
         const tag = document.createElement("span");
         tag.className = "mk-tag";
@@ -45,8 +66,9 @@ window.addEventListener("DOMContentLoaded", function () {
         hl.appendChild(tag);
     });
 
-    // Specs — rendered generically from the product's spec map.
+    // Specs — rendered generically from the product's spec map (key order preserved).
     const specsEl = document.getElementById("product-specs");
+    specsEl.innerHTML = "";
     Object.keys(product.specs).forEach(function (label) {
         const cell = document.createElement("div");
         cell.innerHTML =
@@ -54,7 +76,7 @@ window.addEventListener("DOMContentLoaded", function () {
             '<p class="mk-spec-v">' + escapeHtml(product.specs[label]) + "</p>";
         specsEl.appendChild(cell);
     });
-});
+}
 
 // ---------------------------------------------------------------------------
 // Checkout button handler

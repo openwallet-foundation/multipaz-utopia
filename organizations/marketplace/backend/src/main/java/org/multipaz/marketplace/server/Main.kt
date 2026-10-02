@@ -32,6 +32,8 @@ class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            // Load + validate the catalog before serving: a bad catalog.json must stop startup.
+            Logger.i(TAG, "Catalog loaded: ${marketplaceCatalog.products.size} products")
             runServer(args, environmentInitializer = {
                 add(DocumentTypeRepository::class,
                     DocumentTypeRepository().apply {

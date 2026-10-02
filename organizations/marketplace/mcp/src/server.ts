@@ -2,7 +2,7 @@ import { createStorefront } from "@openmobilehub/credentagent-storefront/server"
 import type { CartStore, CompletedOrderRecord, OrderStore } from "@openmobilehub/credentagent-storefront/server";
 import type { Order } from "@openmobilehub/credentagent-storefront";
 import { CredentAgent, required, age, payment } from "@openmobilehub/credentagent-gate";
-import { catalog, reviews } from "./catalog.js";
+import { DEFAULT_CATALOG_TTL_MS, httpCatalog, type HttpCatalog } from "./catalog.js";
 import { multipazUpayVerifier, standInVerifier, type StandInMode } from "./verifier.js";
 
 // One cart for every MCP session: Claude's remote connector opens a fresh session per tool call,
@@ -23,6 +23,18 @@ export interface BuildStoreOptions {
   createdOrderStore?: OrderStore<Order>;
   /** Completed purchases, behind `get-order-status`. Default: in-memory. */
   completedOrderStore?: OrderStore<CompletedOrderRecord>;
+  /** Catalog source. Default: the marketplace backend's GET /catalog (see catalogUrlFromEnv). */
+  catalog?: HttpCatalog;
+}
+
+/**
+ * Where the backend serves the catalog: MARKETPLACE_CATALOG_URL, else MARKETPLACE_KOTLIN_BASE +
+ * "/catalog", else the local backend on :8010.
+ */
+export function catalogUrlFromEnv(env: NodeJS.ProcessEnv = process.env): string {
+  if (env.MARKETPLACE_CATALOG_URL) return env.MARKETPLACE_CATALOG_URL;
+  const base = (env.MARKETPLACE_KOTLIN_BASE ?? "http://localhost:8010").replace(/\/+$/, "");
+  return `${base}/catalog`;
 }
 
 /**
@@ -51,9 +63,20 @@ export function buildStore(opts: BuildStoreOptions = {}) {
     ? multipazUpayVerifier({ kotlinBase, verifierBase: process.env.MARKETPLACE_VERIFIER_BASE ?? kotlinBase })
     : standInVerifier((process.env.VERDICT as StandInMode) ?? "ok");
 
+  // The backend owns the catalog; it is fetched on first use and TTL-cached, so the MCP can start
+  // before the backend and every order is re-priced from the backend's prices.
+  // A non-numeric or negative TTL falls back to the default rather than silently disabling the cache.
+  const ttl = Number(process.env.MARKETPLACE_CATALOG_TTL_MS);
+  const catalog =
+    opts.catalog ??
+    httpCatalog({
+      url: catalogUrlFromEnv(),
+      ttlMs: process.env.MARKETPLACE_CATALOG_TTL_MS && Number.isFinite(ttl) && ttl >= 0 ? ttl : DEFAULT_CATALOG_TTL_MS,
+    });
+
   const store = createStorefront({
     catalog,
-    reviews,
+    reviews: catalog.reviews,
     ...(baseUrl ?? process.env.MCP_BASE_URL ? { baseUrl: baseUrl ?? process.env.MCP_BASE_URL } : {}),
     ...(opts.createdOrderStore ? { createdOrderStore: opts.createdOrderStore } : {}),
     ...(opts.completedOrderStore ? { orderStore: opts.completedOrderStore } : {}),
@@ -69,5 +92,5 @@ export function buildStore(opts: BuildStoreOptions = {}) {
   credentagent.mount(store.app);
   store.gate((order) => credentagent.requirements(order, [required(ageCred), required(payCred)]));
 
-  return { store, usingStandIn: !kotlinBase };
+  return { store, catalog, usingStandIn: !kotlinBase };
 }

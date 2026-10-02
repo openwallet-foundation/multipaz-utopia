@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.nimbus.oauth2.oidc.sdk)
 
     testImplementation(libs.junit)
+    testImplementation(libs.ktor.server.test.host)
 }
 
 // to inject the utopia stylesheets and chrome script (see shared/theme/README)
