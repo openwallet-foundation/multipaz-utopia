@@ -15,8 +15,8 @@
     "test": "node --import tsx --test --test-force-exit test/catalog.test.ts test/orderStore.test.ts test/server.test.ts"
   },
   "dependencies": {
-    "@openmobilehub/credentagent-gate": "^0.4.0",
-    "@openmobilehub/credentagent-storefront": "^0.4.0",
+    "@openmobilehub/credentagent-gate": "^0.5.0",
+    "@openmobilehub/credentagent-storefront": "^0.5.0",
     "http-proxy-middleware": "^3.0.7"
   },
   "devDependencies": {

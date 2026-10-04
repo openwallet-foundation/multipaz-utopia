@@ -21,6 +21,7 @@ tasks.register<Exec>("npmInstall") {
     commandLine("npm", "install", "--no-audit", "--no-fund")
 
     inputs.file("package.json")
+    inputs.file("package-lock.json")
     outputs.dir("node_modules")
 }
 
@@ -45,6 +46,7 @@ tasks.register<Copy>("stageBundle") {
     dependsOn("compileTypeScript")
 
     from("package.json")
+    from("package-lock.json")
     from(layout.projectDirectory.dir("dist")) { into("dist") }
     into(bundleDir)
 }
@@ -56,9 +58,11 @@ tasks.register<Exec>("bundle") {
 
     workingDir = bundleDir.get().asFile
     // Production-only: leaves tsx/esbuild out of the image (their native binaries are built for
-    // this host, not the container).
-    commandLine("npm", "install", "--omit=dev", "--no-audit", "--no-fund")
+    // this host, not the container). The staged lockfile makes the image reproducible.
+    commandLine("npm", "ci", "--omit=dev", "--no-audit", "--no-fund")
 
+    inputs.file("package.json")
+    inputs.file("package-lock.json")
     outputs.dir(bundleDir)
 }
 

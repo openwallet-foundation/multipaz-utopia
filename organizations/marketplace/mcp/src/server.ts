@@ -1,21 +1,9 @@
 import { createStorefront } from "@openmobilehub/credentagent-storefront/server";
-import type { CartStore, CompletedOrderRecord, OrderStore } from "@openmobilehub/credentagent-storefront/server";
+import type { CompletedOrderRecord, OrderStore } from "@openmobilehub/credentagent-storefront/server";
 import type { Order } from "@openmobilehub/credentagent-storefront";
 import { CredentAgent, required, age, payment } from "@openmobilehub/credentagent-gate";
 import { DEFAULT_CATALOG_TTL_MS, httpCatalog, type HttpCatalog } from "./catalog.js";
 import { multipazUpayVerifier, standInVerifier, type StandInMode } from "./verifier.js";
-
-// One cart for every MCP session: Claude's remote connector opens a fresh session per tool call,
-// so a per-session cart would come back empty on the next call. Fine for a single-user demo.
-class GlobalCartStore implements CartStore {
-  private cart = new Map<string, number>();
-  async read(_sessionId: string): Promise<Map<string, number>> {
-    return new Map(this.cart);
-  }
-  async write(_sessionId: string, cart: Map<string, number>): Promise<void> {
-    this.cart = new Map(cart);
-  }
-}
 
 export interface BuildStoreOptions {
   baseUrl?: string;
@@ -81,10 +69,10 @@ export function buildStore(opts: BuildStoreOptions = {}) {
     ...(opts.createdOrderStore ? { createdOrderStore: opts.createdOrderStore } : {}),
     ...(opts.completedOrderStore ? { orderStore: opts.completedOrderStore } : {}),
     allowEphemeralKey: true,
-    // Stateless: Claude's connector sends no session id, and the stateful transport would reject
-    // those requests with "No valid session" — which surfaces as "could not load the MCP app".
+    // Stateless transport is required for connector/serverless requests without a session header.
+    // Storefront 0.5 carries a signed cart id between calls, so each browser conversation keeps
+    // its own cart rather than sharing the global fallback used by the 0.4 demo.
     statelessMcp: true,
-    cartStore: new GlobalCartStore(),
     verifier,
   });
 

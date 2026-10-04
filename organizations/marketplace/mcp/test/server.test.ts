@@ -23,6 +23,28 @@ async function withServer(fn: (port: number) => Promise<void>): Promise<void> {
   }
 }
 
+async function statelessToolCall(port: number, id: number, name: string, args: Record<string, unknown>) {
+  const res = await fetch(`http://127.0.0.1:${port}/mcp`, {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json, text/event-stream" },
+    body: JSON.stringify({ jsonrpc: "2.0", id, method: "tools/call", params: { name, arguments: args } }),
+  });
+  assert.equal(res.status, 200);
+  const text = await res.text();
+  const messages = text.trimStart().startsWith("{")
+    ? [JSON.parse(text)]
+    : text.split("\n").filter((line) => line.startsWith("data: ")).map((line) => JSON.parse(line.slice(6)));
+  const result = messages.find((message) => message.result)?.result as {
+    content?: { text?: string }[];
+    structuredContent?: unknown;
+  } | undefined;
+  assert.ok(result?.content?.[0]?.text, `${name} should return a text result`);
+  if (result.structuredContent && typeof result.structuredContent === "object") {
+    return result.structuredContent as { cartId?: string; cart?: { lines?: { id: string; quantity: number }[] } };
+  }
+  return JSON.parse(result.content[0].text) as { cartId?: string; cart?: { lines?: { id: string; quantity: number }[] } };
+}
+
 test("the MCP endpoint is served", async () => {
   await withServer(async (port) => {
     const res = await fetch(`http://127.0.0.1:${port}/mcp`, {
@@ -36,6 +58,25 @@ test("the MCP endpoint is served", async () => {
       }),
     });
     assert.equal(res.status, 200);
+  });
+});
+
+test("stateless clients receive isolated signed carts", async () => {
+  await withServer(async (port) => {
+    const first = await statelessToolCall(port, 1, "browse-products", {});
+    const second = await statelessToolCall(port, 2, "browse-products", {});
+    assert.ok(first.cartId, "the first conversation receives a cart id");
+    assert.ok(second.cartId, "the second conversation receives a cart id");
+    assert.notEqual(first.cartId, second.cartId, "each conversation has its own cart");
+
+    await statelessToolCall(port, 3, "add-to-cart", {
+      cartId: first.cartId,
+      items: [{ productId: "p1", quantity: 1 }],
+    });
+    const firstCart = await statelessToolCall(port, 4, "get-cart", { cartId: first.cartId });
+    const secondCart = await statelessToolCall(port, 5, "get-cart", { cartId: second.cartId });
+    assert.equal(firstCart.cart?.lines?.[0]?.id, "p1");
+    assert.equal(secondCart.cart?.lines?.length, 0, "a second cart must not see the first cart's items");
   });
 });
 
