@@ -107,7 +107,7 @@
         var home = el("a", "utopia-brand");
         home.href = window.UTOPIA_HOME || "/";
         home.appendChild(el("span", "utopia-brand-mark", "U"));
-        home.appendChild(el("span", "utopia-brand-name", "Utopia"));
+        home.appendChild(el("span", "utopia-brand-name", "Multipaz Utopia"));
         inner.appendChild(home);
 
         inner.appendChild(el("span", "utopia-demo-pill", "Fictional state \u00B7 demo only"));
@@ -116,6 +116,16 @@
         var nav = el("nav", "utopia-nav");
         nav.setAttribute("aria-label", "Utopia services");
         SERVICES.forEach(function (svc) {
+            if (svc.key === "marketplace") {
+                var marketplace = el("a", "utopia-nav-marketplace");
+                marketplace.appendChild(el("span", null, svc.label));
+                marketplace.appendChild(el("span", "utopia-nav-agentic-note", "(Agent Ready)"));
+
+                marketplace.href = hrefFor(svc);
+                if (svc.key === active) marketplace.setAttribute("aria-current", "page");
+                nav.appendChild(marketplace);
+                return;
+            }
             var a = el("a", null, svc.label);
             a.href = hrefFor(svc);
             if (svc.key === active) a.setAttribute("aria-current", "page");

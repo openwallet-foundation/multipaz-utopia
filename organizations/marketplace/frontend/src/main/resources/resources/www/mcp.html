@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Marketplace MCP — Utopia</title>
+    <link rel="stylesheet" href="marketplace.css">
+    <script>window.UTOPIA_SERVICE = "marketplace";</script>
+    <script src="utopia-chrome.js"></script>
+</head>
+<body>
+<main class="mk-page mk-page--narrow">
+    <a class="mk-back" href="index.html">← Marketplace</a>
+    <p class="mk-eyebrow">Marketplace MCP</p>
+    <h1 class="mk-hero">Shop with an assistant.</h1>
+    <p class="mk-lead">An MCP-compatible assistant can browse the Utopia Marketplace, build a cart,
+        and create a checkout link. You remain in control: you approve the credential and payment
+        flow yourself.</p>
+
+    <section class="mk-mcp-note" aria-labelledby="mcp-endpoint-title">
+        <h2 id="mcp-endpoint-title">Connect your MCP client</h2>
+        <p>Use this endpoint with an MCP-compatible client when connected through the Utopia gateway:</p>
+        <code>/mcp</code>
+        <p class="mk-finePrint">When running the MCP server directly, use
+            <code>http://localhost:3005/mcp</code>.</p>
+    </section>
+
+    <section class="mk-mcp-section" aria-labelledby="mcp-flow-title">
+        <p class="mk-eyebrow">How it works</p>
+        <h2 id="mcp-flow-title">Your assistant shops. You approve.</h2>
+        <ol class="mk-mcp-steps">
+            <li><strong>Browse and prepare.</strong> Your assistant uses MCP tools to browse the
+                catalog and build a cart.</li>
+            <li><strong>Receive a checkout link.</strong> The assistant sends the order to your
+                browser or phone; it cannot complete the purchase itself.</li>
+            <li><strong>Present only what is needed.</strong> Age-restricted items request proof
+                that you are over 18. Every order requests a payment credential.</li>
+            <li><strong>Approve the payment.</strong> The Marketplace verifies the credentials and
+                UPay settles the transaction after you approve it when the Multipaz backend is
+                configured.</li>
+        </ol>
+    </section>
+
+    <section class="mk-mcp-section mk-mcp-section--quiet" aria-labelledby="mcp-safety-title">
+        <p class="mk-eyebrow">Why it is safe to hand off</p>
+        <h2 id="mcp-safety-title">The assistant never gets the final say.</h2>
+        <p>The checkout gate derives the amount from the Marketplace catalog, checks it against what
+            your wallet signed, and re-checks the age policy over the disclosed claims. Verification
+            happens before settlement, so an order the policy refuses is never charged.</p>
+    </section>
+
+    <p class="mk-finePrint">Utopia is a fictional demo environment. Local development uses a
+        stand-in verifier; a configured Multipaz backend verifies credentials and settles through
+        UPay.</p>
+</main>
+</body>
+</html>
