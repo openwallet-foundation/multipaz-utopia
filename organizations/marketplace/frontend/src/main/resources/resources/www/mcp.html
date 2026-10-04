@@ -11,11 +11,30 @@
 <body>
 <main class="mk-page mk-page--narrow">
     <a class="mk-back" href="index.html">← Marketplace</a>
-    <p class="mk-eyebrow">Marketplace MCP</p>
-    <h1 class="mk-hero">Shop with an assistant.</h1>
-    <p class="mk-lead">An MCP-compatible assistant can browse the Utopia Marketplace, build a cart,
-        and create a checkout link. You remain in control: you approve the credential and payment
-        flow yourself.</p>
+    <p class="mk-eyebrow">Try it live</p>
+    <h1 class="mk-hero">Take the Marketplace MCP for a spin.</h1>
+    <p class="mk-lead">Start with our live catalog below, then browse the full catalog in an MCP
+        product picker. Checkout always stays yours to approve.</p>
+
+    <button class="mk-mcp-try" type="button" data-scroll-to="mcp-showcase">Try the checkout flow</button>
+
+    <section id="mcp-showcase" class="mk-mcp-showcase" aria-labelledby="mcp-showcase-title">
+        <div class="mk-mcp-showcase-head">
+            <div>
+                <p class="mk-eyebrow">Live MCP storefront</p>
+                <h2 id="mcp-showcase-title">Build a cart. Open a real checkout.</h2>
+            </div>
+            <p id="mcp-cart-summary" class="mk-mcp-cart-summary" aria-live="polite">Your cart is empty</p>
+        </div>
+        <p class="mk-mcp-showcase-copy">These products come from the Marketplace catalog. “Checkout” creates
+            an actual MCP storefront order and opens its credential and payment approval flow.</p>
+        <p id="mcp-demo-status" class="mk-status" aria-live="polite">Loading live catalog…</p>
+        <div id="mcp-product-picker" class="mk-mcp-picker" aria-label="Marketplace product picker"></div>
+        <div class="mk-mcp-checkout-bar">
+            <span id="mcp-cart-total">0 items · $0.00</span>
+            <button id="mcp-checkout-button" class="mk-mcp-checkout" type="button" disabled>Checkout</button>
+        </div>
+    </section>
 
     <section class="mk-mcp-note" aria-labelledby="mcp-endpoint-title">
         <h2 id="mcp-endpoint-title">Connect your MCP client</h2>
@@ -53,5 +72,7 @@
         stand-in verifier; a configured Multipaz backend verifies credentials and settles through
         UPay.</p>
 </main>
+<script src="catalog.js"></script>
+<script src="mcp-demo.js"></script>
 </body>
 </html>

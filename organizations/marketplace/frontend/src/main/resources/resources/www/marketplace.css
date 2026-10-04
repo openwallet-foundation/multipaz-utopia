@@ -106,6 +106,49 @@ h1, h2, h3 {
     color: color-mix(in srgb, var(--utopia-ink) 50%, transparent);
 }
 
+/* -- Interactive MCP showcase ------------------------------------------- */
+
+.mk-mcp-try {
+    margin-top: 24px;
+    padding: 11px 17px;
+    border: 0;
+    border-radius: var(--utopia-radius-pill);
+    background: var(--utopia-accent);
+    color: var(--utopia-bg);
+    cursor: pointer;
+    font: 600 14px var(--utopia-font-sans);
+}
+.mk-mcp-try:hover { background: var(--utopia-accent-hover); }
+
+.mk-mcp-showcase {
+    margin-top: 34px;
+    padding: 26px;
+    border: 1px solid var(--utopia-border);
+    border-radius: var(--utopia-radius);
+    background: var(--utopia-surface-raised);
+}
+.mk-mcp-showcase-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+.mk-mcp-showcase-head .mk-eyebrow { margin-bottom: 7px; }
+.mk-mcp-showcase h2 { font-size: 26px; }
+.mk-mcp-cart-summary { margin: 4px 0 0; color: var(--utopia-ink-soft); font-size: 13px; white-space: nowrap; }
+.mk-mcp-showcase-copy { max-width: 50rem; margin: 6px 0 20px; color: var(--utopia-ink-soft); }
+.mk-mcp-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-height: 590px; overflow: auto; padding-right: 4px; }
+.mk-mcp-product { display: flex; min-width: 0; flex-direction: column; padding: 12px; border: 1px solid var(--utopia-border); border-radius: var(--utopia-radius-sm); background: var(--utopia-bg); }
+.mk-mcp-product-art { display: grid; min-height: 112px; place-items: center; border-radius: calc(var(--utopia-radius-sm) - 2px); font-size: 54px; }
+.mk-mcp-product-meta { margin: 12px 0 2px; color: var(--utopia-ink-soft); font-size: 10px; letter-spacing: var(--utopia-tracking-label); text-transform: uppercase; }
+.mk-mcp-product h3 { margin: 0; font-size: 16px; }
+.mk-mcp-product-detail { display: -webkit-box; overflow: hidden; margin: 5px 0 12px; color: var(--utopia-ink-soft); font-size: 12px; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.mk-mcp-product-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; font-size: 13px; }
+.mk-mcp-product-footer button { padding: 4px 9px; border: 1px solid var(--utopia-accent); border-radius: var(--utopia-radius-pill); background: transparent; color: var(--utopia-emphasis); cursor: pointer; font: 600 11px var(--utopia-font-sans); }
+.mk-mcp-product-footer button:hover { background: var(--utopia-accent-soft); }
+.mk-mcp-checkout-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--utopia-border); font-weight: 600; }
+.mk-mcp-checkout { padding: 10px 17px; border: 0; border-radius: var(--utopia-radius-pill); background: var(--utopia-accent); color: var(--utopia-bg); cursor: pointer; font: 600 13px var(--utopia-font-sans); }
+.mk-mcp-checkout:hover { background: var(--utopia-accent-hover); }
+.mk-mcp-checkout:disabled { cursor: not-allowed; opacity: .45; }
+
+@media (max-width: 760px) { .mk-mcp-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .mk-mcp-showcase { padding: 20px; } .mk-mcp-showcase-head { display: block; } .mk-mcp-cart-summary { margin-top: 10px; } .mk-mcp-picker { grid-template-columns: 1fr; } }
+
 /* -- MCP information ----------------------------------------------------- */
 
 .mk-mcp-note {
