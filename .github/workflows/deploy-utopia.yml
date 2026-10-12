@@ -1,0 +1,186 @@
+name: Deploy Utopia to production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# A second deployment must not replace the image while the first one is still
+# loading it on the small production VM.
+concurrency:
+  group: utopia-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  GCP_PROJECT_ID: utopia-multipaz
+  GCP_ZONE: us-central1-c
+  GCP_INSTANCE: utopia-multipaz-server
+  GCP_WORKLOAD_IDENTITY_PROVIDER: projects/873069027544/locations/global/workloadIdentityPools/github/providers/github-actions
+  GCP_DEPLOY_SERVICE_ACCOUNT: utopia-github-deployer@utopia-multipaz.iam.gserviceaccount.com
+
+jobs:
+  deploy:
+    name: Build and deploy Utopia
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the deployment revision
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Build the Linux AMD64 image
+        run: ./gradlew :deployment:buildDockerImageAmd64 --no-daemon
+
+      - name: Tag the image with the immutable commit SHA
+        id: image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          image="multipaz-utopia/server-bundle:${IMAGE_TAG}"
+          docker tag multipaz-utopia/server-bundle:latest-amd64 "$image"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Make space and retain a rollback image on the VM
+        env:
+          IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          set -euo pipefail
+          gcloud compute ssh "$GCP_INSTANCE" \
+            --project="$GCP_PROJECT_ID" \
+            --zone="$GCP_ZONE" \
+            --tunnel-through-iap \
+            --quiet \
+            --command="sudo bash -s -- '$IMAGE'" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+
+          image="$1"
+          stack_dir=/opt/multipaz/stack
+          env_file="$stack_dir/.env"
+          rollback_env="$stack_dir/.env.rollback"
+          rollback_image=multipaz-utopia/server-bundle:rollback
+
+          test -f "$env_file"
+          cd "$stack_dir"
+          cp -p "$env_file" "$rollback_env"
+          sudo docker image tag "$(sudo docker inspect multipaz-utopia --format '{{.Image}}')" "$rollback_image"
+
+          # Retain only the running image (under :rollback) before loading the
+          # approximately 1.2 GB replacement image. This follows RUNBOOK.md.
+          sudo docker image ls --format '{{.Repository}}:{{.Tag}}' \
+            | grep '^multipaz-utopia/server-bundle:' \
+            | while IFS= read -r candidate; do
+                if [ "$candidate" != "$rollback_image" ]; then
+                  sudo docker image rm "$candidate" || true
+                fi
+              done
+          sudo docker image prune --force
+
+          available_kib="$(df -Pk / | awk 'NR == 2 {print $4}')"
+          if [ "$available_kib" -lt 1572864 ]; then
+            echo "Need at least 1.5 GiB free on / before loading $image; have ${available_kib} KiB" >&2
+            exit 1
+          fi
+          sudo cp -a "$stack_dir" "${stack_dir}.bak-$(date -u +%Y%m%dT%H%M%SZ)"
+          df -h /
+          REMOTE_SCRIPT
+
+      - name: Stream image to Docker through IAP
+        env:
+          IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          set -euo pipefail
+          docker save "$IMAGE" | gcloud compute ssh "$GCP_INSTANCE" \
+            --project="$GCP_PROJECT_ID" \
+            --zone="$GCP_ZONE" \
+            --tunnel-through-iap \
+            --quiet \
+            --command='sudo docker load'
+
+      - name: Activate image and verify health
+        env:
+          IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          set -euo pipefail
+          gcloud compute ssh "$GCP_INSTANCE" \
+            --project="$GCP_PROJECT_ID" \
+            --zone="$GCP_ZONE" \
+            --tunnel-through-iap \
+            --quiet \
+            --command="sudo bash -s -- '$IMAGE'" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+
+          image="$1"
+          stack_dir=/opt/multipaz/stack
+          env_file="$stack_dir/.env"
+          rollback_env="$stack_dir/.env.rollback"
+          rollback_image=multipaz-utopia/server-bundle:rollback
+
+          test -f "$env_file"
+
+          cd "$stack_dir"
+          if grep -q '^UTOPIA_IMAGE=' "$env_file"; then
+            sed -i "s|^UTOPIA_IMAGE=.*|UTOPIA_IMAGE=$image|" "$env_file"
+          else
+            printf '\nUTOPIA_IMAGE=%s\n' "$image" >> "$env_file"
+          fi
+
+          if ! docker compose --project-directory "$stack_dir" up -d --force-recreate utopia; then
+            cp -p "$rollback_env" "$env_file"
+            sed -i "s|^UTOPIA_IMAGE=.*|UTOPIA_IMAGE=$rollback_image|" "$env_file"
+            docker compose --project-directory "$stack_dir" up -d --force-recreate utopia || true
+            exit 1
+          fi
+
+          healthy=false
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error http://127.0.0.1:8100/health >/dev/null; then
+              healthy=true
+              break
+            fi
+            sleep 5
+          done
+          if [ "$healthy" != true ]; then
+            cp -p "$rollback_env" "$env_file"
+            sed -i "s|^UTOPIA_IMAGE=.*|UTOPIA_IMAGE=$rollback_image|" "$env_file"
+            docker compose --project-directory "$stack_dir" up -d --force-recreate utopia
+            exit 1
+          fi
+
+          df -h /
+          docker compose --project-directory "$stack_dir" ps utopia
+          curl --fail --silent --show-error http://127.0.0.1:8100/health >/dev/null
+          REMOTE_SCRIPT
+
+      - name: Verify the public, origin, and terminal health endpoints
+        run: |
+          set -euo pipefail
+          base=https://utopia.multipaz.org
+          for path in /health /dmv/ /transit-terminal/ /pos-terminal/; do
+            curl --fail --retry 12 --retry-all-errors --retry-delay 5 "$base$path" >/dev/null
+          done
+          curl --fail --silent "$base/.well-known/openid-credential-issuer/dmv" | \
+            grep -q '"credential_issuer"[[:space:]]*:[[:space:]]*"https://utopia.multipaz.org/dmv"'
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' https://utopia-origin.multipaz.org/health)" = 200
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://34.44.236.57/health)" = 404
