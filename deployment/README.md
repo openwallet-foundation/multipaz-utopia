@@ -69,6 +69,22 @@ No additional setup is required.
 
 Note: Building for a non-native architecture uses emulation and is slower.
 
+### Select the container engine
+
+By default, the Gradle tasks prefer Podman **if** it is installed, otherwise it
+use Docker. Override that selection with the `containerTool` Gradle property:
+
+```bash
+# Required when a later command uses Docker (for example, GitHub Actions).
+./gradlew :deployment:buildDockerImageAmd64 -PcontainerTool=docker
+
+# Explicit Podman build.
+./gradlew :deployment:buildDockerImageAmd64 -PcontainerTool=podman
+```
+
+Docker and Podman have separate local image stores. Use the same engine for the
+build and subsequent `tag`, `save`, `load`, or `run` commands.
+
 ### What gets built
 
 The build creates a container image stored locally. View your images with:
@@ -219,4 +235,3 @@ Each service builds its configuration from three layers, later ones overriding e
 
 Because layer 1 ships in the jar, a server started outside this bundle still comes up with working
 defaults — see the [root README](../README.md#configuration).
-

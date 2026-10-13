@@ -41,7 +41,7 @@ jobs:
           cache: gradle
 
       - name: Build the Linux AMD64 image
-        run: ./gradlew :deployment:buildDockerImageAmd64 --no-daemon
+        run: ./gradlew :deployment:buildDockerImageAmd64 --no-daemon -PcontainerTool=docker
 
       - name: Tag the image with the immutable commit SHA
         id: image
@@ -50,6 +50,7 @@ jobs:
         run: |
           set -euo pipefail
           image="multipaz-utopia/server-bundle:${IMAGE_TAG}"
+          docker image inspect multipaz-utopia/server-bundle:latest-amd64
           docker tag multipaz-utopia/server-bundle:latest-amd64 "$image"
           echo "image=$image" >> "$GITHUB_OUTPUT"
 

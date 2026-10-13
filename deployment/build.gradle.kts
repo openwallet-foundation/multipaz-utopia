@@ -92,8 +92,17 @@ tasks.register("buildAll") {
     dependsOn("collectDependencies", "buildMcp")
 }
 
-// Helper function to get container tool (podman or docker)
+// Helper function to get container tool (podman or docker). You can select one
+// explicitly with -PcontainerTool parameter
 fun getContainerTool(): String {
+    val requestedTool = providers.gradleProperty("containerTool").orNull
+    if (requestedTool != null) {
+        require(requestedTool == "docker" || requestedTool == "podman") {
+            "containerTool must be either docker or podman, not '$requestedTool'"
+        }
+        return requestedTool
+    }
+
     return if (file("/usr/bin/podman").exists() ||
         file("/usr/local/bin/podman").exists() ||
         file("/opt/homebrew/bin/podman").exists() ||
