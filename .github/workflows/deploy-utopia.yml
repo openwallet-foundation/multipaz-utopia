@@ -22,6 +22,7 @@ env:
   GCP_INSTANCE: utopia-multipaz-server
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/873069027544/locations/global/workloadIdentityPools/github/providers/github-actions
   GCP_DEPLOY_SERVICE_ACCOUNT: utopia-github-deployer@utopia-multipaz.iam.gserviceaccount.com
+  ARTIFACT_REGISTRY_REPOSITORY: us-central1-docker.pkg.dev/utopia-multipaz/multipaz-images
 
 jobs:
   deploy:
@@ -49,7 +50,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           set -euo pipefail
-          image="multipaz-utopia/server-bundle:${IMAGE_TAG}"
+          image="${ARTIFACT_REGISTRY_REPOSITORY}/utopia-server-bundle:${IMAGE_TAG}"
           docker image inspect multipaz-utopia/server-bundle:latest-amd64
           docker tag multipaz-utopia/server-bundle:latest-amd64 "$image"
           echo "image=$image" >> "$GITHUB_OUTPUT"
@@ -63,7 +64,15 @@ jobs:
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Make space and retain a rollback image on the VM
+      - name: Push the immutable image to Artifact Registry
+        env:
+          IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          set -euo pipefail
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+          docker push "$IMAGE"
+
+      - name: Make space and record the rollback image on the VM
         env:
           IMAGE: ${{ steps.image.outputs.image }}
         run: |
@@ -80,23 +89,19 @@ jobs:
           stack_dir=/opt/multipaz/stack
           env_file="$stack_dir/.env"
           rollback_env="$stack_dir/.env.rollback"
-          rollback_image=multipaz-utopia/server-bundle:rollback
 
           test -f "$env_file"
           cd "$stack_dir"
           cp -p "$env_file" "$rollback_env"
-          sudo docker image tag "$(sudo docker inspect multipaz-utopia --format '{{.Image}}')" "$rollback_image"
+          if ! grep -q '^UTOPIA_IMAGE=' "$rollback_env"; then
+            printf '\nUTOPIA_IMAGE=%s\n' "$(sudo docker inspect multipaz-utopia --format '{{.Config.Image}}')" >> "$rollback_env"
+          fi
 
-          # Retain only the running image (under :rollback) before loading the
-          # approximately 1.2 GB replacement image. This follows RUNBOOK.md.
-          sudo docker image ls --format '{{.Repository}}:{{.Tag}}' \
-            | grep '^multipaz-utopia/server-bundle:' \
-            | while IFS= read -r candidate; do
-                if [ "$candidate" != "$rollback_image" ]; then
-                  sudo docker image rm "$candidate" || true
-                fi
-              done
-          sudo docker image prune --force
+          # Images used by running containers are retained. Artifact Registry
+          # is the rollback source for all other immutable image versions.
+          sudo docker image prune --all --force
+          sudo docker builder prune --all --force
+          sudo journalctl --vacuum-size=200M
 
           available_kib="$(df -Pk / | awk 'NR == 2 {print $4}')"
           if [ "$available_kib" -lt 1572864 ]; then
@@ -107,17 +112,22 @@ jobs:
           df -h /
           REMOTE_SCRIPT
 
-      - name: Stream image to Docker through IAP
+      - name: Pull image from Artifact Registry on the VM
         env:
           IMAGE: ${{ steps.image.outputs.image }}
         run: |
           set -euo pipefail
-          docker save "$IMAGE" | gcloud compute ssh "$GCP_INSTANCE" \
+          gcloud compute ssh "$GCP_INSTANCE" \
             --project="$GCP_PROJECT_ID" \
             --zone="$GCP_ZONE" \
             --tunnel-through-iap \
             --quiet \
-            --command='sudo docker load'
+            --command="sudo bash -s -- '$IMAGE'" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          image="$1"
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+          docker pull "$image"
+          REMOTE_SCRIPT
 
       - name: Activate image and verify health
         env:
@@ -136,8 +146,6 @@ jobs:
           stack_dir=/opt/multipaz/stack
           env_file="$stack_dir/.env"
           rollback_env="$stack_dir/.env.rollback"
-          rollback_image=multipaz-utopia/server-bundle:rollback
-
           test -f "$env_file"
 
           cd "$stack_dir"
@@ -149,7 +157,9 @@ jobs:
 
           if ! docker compose --project-directory "$stack_dir" up -d --force-recreate utopia; then
             cp -p "$rollback_env" "$env_file"
-            sed -i "s|^UTOPIA_IMAGE=.*|UTOPIA_IMAGE=$rollback_image|" "$env_file"
+            rollback_image="$(sed -n 's/^UTOPIA_IMAGE=//p' "$rollback_env" | tail -n 1)"
+            test -n "$rollback_image"
+            docker image inspect "$rollback_image" >/dev/null 2>&1 || docker pull "$rollback_image"
             docker compose --project-directory "$stack_dir" up -d --force-recreate utopia || true
             exit 1
           fi
@@ -164,11 +174,15 @@ jobs:
           done
           if [ "$healthy" != true ]; then
             cp -p "$rollback_env" "$env_file"
-            sed -i "s|^UTOPIA_IMAGE=.*|UTOPIA_IMAGE=$rollback_image|" "$env_file"
+            rollback_image="$(sed -n 's/^UTOPIA_IMAGE=//p' "$rollback_env" | tail -n 1)"
+            test -n "$rollback_image"
+            docker image inspect "$rollback_image" >/dev/null 2>&1 || docker pull "$rollback_image"
             docker compose --project-directory "$stack_dir" up -d --force-recreate utopia
             exit 1
           fi
 
+          docker image prune --all --force
+          docker builder prune --all --force
           df -h /
           docker compose --project-directory "$stack_dir" ps utopia
           curl --fail --silent --show-error http://127.0.0.1:8100/health >/dev/null
