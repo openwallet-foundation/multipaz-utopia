@@ -8,6 +8,7 @@ val serverProjects = listOf(
     "organizations:registry:backend",
     "organizations:upay:backend",
     "organizations:dmv:backend",
+    "organizations:id:backend",
     "organizations:bank_of_utopia:backend",
     "organizations:marketplace:backend"
 )

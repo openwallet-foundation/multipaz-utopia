@@ -57,6 +57,6 @@ RUN mkdir -p /var/lib/nginx/body /var/log/nginx /run /run/nginx && \
 USER multipaz
 
 # Expose unified port (nginx) and individual service ports
-EXPOSE 8100 8002 8004 8009 8010 8017
+EXPOSE 8100 8002 8004 8009 8010 8017 8018
 
 ENTRYPOINT ["/app/start-servers.sh"]

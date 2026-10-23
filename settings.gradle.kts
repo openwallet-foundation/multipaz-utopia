@@ -41,6 +41,7 @@ plugins {
 include(":shared:issuer")
 include(":organizations:bank_of_utopia:backend")
 include(":organizations:dmv:backend")
+include(":organizations:id:backend")
 include(":organizations:upay:backend")
 include(":organizations:registry:backend")
 include(":organizations:marketplace:backend")

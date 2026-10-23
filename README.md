@@ -10,6 +10,7 @@ whole world can be run at once.
 |---------------------|-----------------------------------------------------------------------------|-----------------------------------------|------------|---------------------------|
 | **Registry**        | System of Record (identities, accounts, enrollment/IACA, payment processor) | `:organizations:registry:backend`       | 8004       | `/registry/`              |
 | **Utopia DMV**      | mDL issuer (OpenID4VCI)                                                     | `:organizations:dmv:backend`            | 8002       | `/dmv/`                   |
+| **Utopia ID Services** | PhotoID issuer (OpenID4VCI)                                               | `:organizations:id:backend`             | 8018       | `/id/`                    |
 | **Bank of Utopia**  | Payment card issuer (OpenID4VCI)                                            | `:organizations:bank_of_utopia:backend` | 8017       | `/bank_of_utopia/`        |
 | **UPay**            | Payment card verifier — transfers money between accounts                    | `:organizations:upay:backend`           | 8009       | `/upay/`                  |
 | **Marketplace**     | Grocery storefront — payment + age-restricted checkout                      | `:organizations:marketplace:backend`    | 8010       | `/marketplace/`           |

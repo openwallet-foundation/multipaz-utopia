@@ -105,6 +105,7 @@ service verifier upay org.multipaz.upay.server.Main 8009 -param registry_url=htt
 service verifier marketplace org.multipaz.marketplace.server.Main 8010 ${PAYEE_ACCOUNT:+-param payee_account=$PAYEE_ACCOUNT}
 service openid4vci bank_of_utopia org.multipaz.utopia.organizations.bankofutopia.server.Main 8017 -param admin_password=$ADMIN_PASS
 service openid4vci dmv org.multipaz.utopia.organizations.dmv.server.Main 8002 -param admin_password=$ADMIN_PASS
+service openid4vci id org.multipaz.utopia.organizations.idservices.server.Main 8018 -param admin_password=$ADMIN_PASS
 
 # MCP storefront (Node) — the agentic front-door onto the marketplace. Reaches the marketplace
 # backend in-container for the delegated verifier (server-to-server), and serves its pages on the
@@ -152,7 +153,7 @@ echo "Multipaz Utopia Server Bundle is running"
 if [ "$MODE" = "proxy" ]; then
     echo "Access via: ${BASE_URL}"
 else
-    echo "Access services directly on ports 8002, 8004, 8009-8011 and 8017"
+    echo "Access services directly on ports 8002, 8004, 8009-8011, 8017 and 8018"
 fi
 echo "=========================================="
 echo ""

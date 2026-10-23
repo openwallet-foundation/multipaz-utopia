@@ -41,6 +41,7 @@
     var SERVICES = [
         { key: "registry",       label: "Registry",    path: "/registry/",        ports: [8004] },
         { key: "dmv",            label: "DMV",         path: "/dmv/",             ports: [8002] },
+        { key: "id",             label: "ID Services", path: "/id/",              ports: [8018] },
         { key: "bank_of_utopia", label: "Bank",        path: "/bank_of_utopia/",  ports: [8017] },
         { key: "marketplace",    label: "Marketplace", path: "/marketplace/",     ports: [8010] },
         { key: "upay",           label: "UPay",        path: "/upay/",            ports: [8009] }
