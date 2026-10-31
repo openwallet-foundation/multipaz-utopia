@@ -35,6 +35,11 @@ COPY deployment/docker/services /etc/multipaz
 # Root web resource(s)
 COPY deployment/docker/web /app/web
 
+# APKs and their release manifest are intentionally kept outside the source
+# tree. This seeds an empty local catalog; production bind-mounts this path so
+# app releases survive replacement of the container image.
+COPY deployment/docker/downloads /app/downloads
+
 # The landing page links the shared design tokens and chrome as siblings of
 # itself, so they are staged into the same directory (see shared/theme/README)
 COPY shared/theme/common/resources/www /app/web

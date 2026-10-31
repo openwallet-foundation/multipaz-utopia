@@ -1,0 +1,60 @@
+{
+  "apps": [
+    {
+      "id": "multipaz-wallet",
+      "name": "Multipaz Wallet",
+      "description": "Reference wallet for receiving and presenting Utopia credentials.",
+      "platform": "Android",
+      "externalUrl": "https://apps.multipaz.org/"
+    },
+    {
+      "id": "multipaz-wallet-dev",
+      "name": "Multipaz Wallet Dev",
+      "description": "Developer wallet variant for Utopia testing on development devices.",
+      "platform": "Android",
+      "externalUrl": "https://apps.multipaz.org/"
+    },
+    {
+      "id": "multipaz-test-app",
+      "name": "Multipaz Test App",
+      "description": "Test credential wallet used to explore Utopia issuance and presentation flows.",
+      "platform": "Android",
+      "externalUrl": "https://apps.multipaz.org/"
+    },
+    {
+      "id": "multipaz-test-app-alternate",
+      "name": "Multipaz Test App — alternate",
+      "description": "Second Test App identity for testing presentment disambiguation.",
+      "platform": "Android",
+      "externalUrl": "https://apps.multipaz.org/"
+    },
+    {
+      "id": "utopia-transit",
+      "name": "Utopia Transit Terminal",
+      "description": "Terminal app for validating credentials in the Utopia Transit demonstration.",
+      "platform": "Android",
+      "status": "pending"
+    },
+    {
+      "id": "utopia-pos",
+      "name": "Utopia POS Terminal",
+      "description": "Merchant terminal app for Utopia payment demonstrations.",
+      "platform": "Android",
+      "status": "pending"
+    },
+    {
+      "id": "multipaz-extras-test-app",
+      "name": "Multipaz Extras Test App",
+      "description": "Additional test app for development and interoperability scenarios.",
+      "platform": "Android",
+      "externalUrl": "https://apps.multipaz.org/"
+    },
+    {
+      "id": "multipaz-wasm-test-app",
+      "name": "Multipaz Wasm Test App",
+      "description": "Browser-based companion for test credential provisioning and web experiments.",
+      "platform": "Web",
+      "externalUrl": "https://apps.multipaz.org/"
+    }
+  ]
+}

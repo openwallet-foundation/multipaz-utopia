@@ -39,6 +39,7 @@
     // Order matters: this is the order the nav renders in. The ports are the ones each service
     // listens on, both in the container bundle and when run on its own from Gradle.
     var SERVICES = [
+        { key: "apps",           label: "Apps",        path: "/apps/",             ports: [] },
         { key: "registry",       label: "Registry",    path: "/registry/",        ports: [8004] },
         { key: "dmv",            label: "DMV",         path: "/dmv/",             ports: [8002] },
         { key: "id",             label: "ID Services", path: "/id/",              ports: [8018] },
@@ -57,7 +58,7 @@
     function hrefFor(svc) {
         var override = window.UTOPIA_NAV && window.UTOPIA_NAV[svc.key];
         if (override) return override;
-        if (isLocalPort) {
+        if (isLocalPort && svc.ports.length > 0) {
             // Link to whichever port this service is actually reachable on
             var port = servesPort(svc, location.port) ? location.port : svc.ports[0];
             return location.protocol + "//" + location.hostname + ":" + port + "/";

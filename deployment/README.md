@@ -185,6 +185,34 @@ Use option `-v </your/db/folder>:/app/data:z` to mount the folder where database
 to a folder on your host machine. This way data will not be erased between the container runs.
 Similarly `-v </your/logs/folder>:/app/logs:z` will ensure that log files are preserved.
 
+### Publishing Android app releases
+
+The Utopia Apps catalog is served at `/apps/`. Its release metadata and APKs are deliberately
+outside the image so an app release does not require rebuilding or replacing the server bundle.
+Create a persistent host directory from the tracked catalog template, then mount it read-only into
+the container:
+
+```bash
+sudo install -d -m 0755 /opt/utopia/downloads
+sudo cp deployment/docker/downloads/releases.json /opt/utopia/downloads/releases.json
+
+podman run -d --rm \
+    -p 127.0.0.1:8100:8100 \
+    -v /opt/utopia/downloads:/app/downloads:ro,z \
+    -e BASE_URL=https://your-domain.com \
+    -e ADMIN_PASS=<password> \
+    multipaz-utopia/server-bundle:latest-amd64
+```
+
+Publish each signed APK at an immutable path keyed by its source commit, such as
+`/opt/utopia/downloads/utopia-pos/e95c924/utopia-pos.apk`, alongside its `.sha256` file. After the
+upload and checksum verification succeed, update `/opt/utopia/downloads/releases.json`. nginx
+serves the manifest with `no-cache` and versioned artifacts with a long immutable cache lifetime;
+no nginx reload is required for file changes.
+
+Never overwrite a published versioned APK or commit APKs to this repository. To withdraw a
+release, remove it from `releases.json` and publish a corrected version at a new path.
+
 Note: this will deploy the bundle as an HTTP service on port 8100, you would still need to use your
 environment to expose it as HTTPS service. Also, if not running on the root of the domain (e.g.
 your BASE_URL is `https://foo.com/bar` rather than `https://foo.bar`), handlers for `/.well-known` 

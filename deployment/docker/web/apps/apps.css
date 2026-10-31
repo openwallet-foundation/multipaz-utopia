@@ -1,0 +1,55 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: var(--utopia-bg);
+    color: var(--utopia-ink);
+    font-family: var(--utopia-font-sans);
+    line-height: 1.5;
+}
+
+h1, h2, h3 {
+    font-family: var(--utopia-font-display);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+}
+
+.apps-page { max-width: var(--utopia-page-max); margin: 0 auto; padding: 60px 28px 40px; }
+.eyebrow { margin: 0 0 14px; color: var(--utopia-emphasis); font-size: 12px; letter-spacing: var(--utopia-tracking-label); text-transform: uppercase; }
+h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); margin: 0 0 16px; }
+.lead { max-width: 44rem; margin: 0; color: var(--utopia-ink-soft); font-size: 1.15rem; }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 40px 0 58px; padding: 0; list-style: none; }
+.step { min-height: 116px; padding: 20px; border: 1px solid var(--utopia-border); border-radius: var(--utopia-radius-sm); background: var(--utopia-surface); }
+.step-number { display: block; margin-bottom: 10px; color: var(--utopia-emphasis); font-family: var(--utopia-font-display); font-size: 1.25rem; }
+.step strong { display: block; font-size: .95rem; }
+
+.app-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+.app-card { display: flex; flex-direction: column; min-height: 304px; padding: 25px; border: 1px solid var(--utopia-border); border-radius: var(--utopia-radius); background: var(--utopia-surface-raised); box-shadow: var(--utopia-shadow-sm); }
+.app-card h3 { margin: 13px 0 8px; font-size: 1.4rem; }
+.app-description { margin: 0; color: var(--utopia-ink-soft); }
+.badges { display: flex; flex-wrap: wrap; gap: 7px; }
+.badge { padding: 4px 9px; border-radius: var(--utopia-radius-pill); background: var(--utopia-tint-2); color: var(--utopia-success-ink); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.badge-demo { background: var(--utopia-accent-soft); color: var(--utopia-emphasis); }
+.badge-pending { background: var(--utopia-tint-3); color: var(--utopia-ink-soft); }
+
+.app-meta { display: grid; grid-template-columns: max-content 1fr; gap: 5px 10px; margin: 20px 0; font-size: .83rem; }
+.app-meta dt { color: var(--utopia-ink-soft); }
+.app-meta dd { margin: 0; overflow-wrap: anywhere; font-family: var(--utopia-font-mono); font-size: .78rem; }
+.app-action { display: inline-flex; justify-content: center; align-items: center; margin-top: auto; padding: 11px 18px; border-radius: var(--utopia-radius-pill); background: var(--utopia-accent); color: var(--utopia-bg); font-family: var(--utopia-font-display); text-decoration: none; }
+.app-action:hover { background: var(--utopia-accent-hover); }
+.app-unavailable { margin: auto 0 0; color: var(--utopia-ink-soft); font-size: .9rem; font-weight: 600; }
+
+.empty, .error { margin: 18px 0 0; padding: 22px; border: 1px solid var(--utopia-border); border-radius: var(--utopia-radius-sm); background: var(--utopia-surface); color: var(--utopia-ink-soft); }
+.error { border-color: var(--utopia-danger-line); color: var(--utopia-danger-strong); }
+
+@media (max-width: 900px) {
+    .apps-page { padding: 38px 18px; }
+    .steps, .app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .steps, .app-grid { grid-template-columns: 1fr; }
+}

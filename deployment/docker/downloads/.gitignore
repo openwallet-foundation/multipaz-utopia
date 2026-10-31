@@ -1,0 +1,5 @@
+# APK release artifacts are uploaded directly to the deployment VM.
+*
+!.gitignore
+!releases.json
+!README.md
