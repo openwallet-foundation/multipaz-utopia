@@ -20,6 +20,8 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
+import org.multipaz.cbor.Tstr
+import org.multipaz.claim.MdocClaim
 import org.multipaz.documenttype.knowntypes.PaymentTransaction
 import org.multipaz.rpc.backend.BackendEnvironment
 import org.multipaz.rpc.backend.Configuration
@@ -37,6 +39,7 @@ import org.multipaz.server.payment.PaymentProcessorStub
 import org.multipaz.server.payment.PaymentTransactionRequest
 import org.multipaz.util.Logger
 import org.multipaz.util.toBase64Url
+import org.multipaz.verification.MdocVerifiedPresentation
 import org.multipaz.verifier.customization.VerifierAssistant
 import org.multipaz.verifier.customization.VerifierPresentment
 import java.lang.IllegalStateException
@@ -312,10 +315,14 @@ class MarketplaceVerifierAssistant : VerifierAssistant {
         // DPC verification — credential_sets requires a "payment" entry, so its absence is a
         // contract violation, not a user-facing error.
         check(response["payment"] != null) { "DCQL guaranteed a 'payment' entry but none was returned" }
-        val paymentEntry = response["payment"]!!.jsonObject
-        val paymentClaims = paymentEntry["claims"]?.jsonObject
-        val holderName = paymentClaims?.get("holder_name")?.jsonPrimitive?.contentOrNull
-        val issuerName = paymentClaims?.get("issuer_name")?.jsonPrimitive?.contentOrNull
+
+        // `response` is a protocol convenience projection and may omit the nested `claims`
+        // object even though the wallet supplied the claims in its verified mdoc. Read receipt
+        // fields from that issuer-signed presentation instead, just as UPay does for settlement.
+        val payment = presentment.presentations.filterIsInstance<MdocVerifiedPresentation>()
+            .find { it.docType == "org.multipaz.payment.sca.1" }
+        val holderName = payment?.signedStringClaim("holder_name")
+        val issuerName = payment?.signedStringClaim("issuer_name")
 
         if (holderName.isNullOrBlank() || issuerName.isNullOrBlank()) {
             Logger.i(TAG, "DPC check failed: holder_name='$holderName' issuer_name='$issuerName'")
@@ -357,6 +364,17 @@ private suspend fun getPaymentProcessor(serviceUrl: String): PaymentProcessor {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Reads a text claim from the issuer-signed payment-card namespace, or null if absent or not text.
+ * Device-signed claims are intentionally ignored.
+ */
+private fun MdocVerifiedPresentation.signedStringClaim(dataElementName: String): String? {
+    val claim = issuerSignedClaims.filterIsInstance<MdocClaim>().find {
+        it.namespaceName == "org.multipaz.payment.sca.1" && it.dataElementName == dataElementName
+    }
+    return (claim?.value as? Tstr)?.asTstr
+}
 
 /**
  * Returns the first recognized ID credential's key and its claims object,
